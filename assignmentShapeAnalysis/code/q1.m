@@ -2,8 +2,8 @@ mat = load('../data/ellipses2D.mat');
 pointSets = mat.pointSets;
 %% Plotting the pointsets
 
-% plotPointsets(pointSets);
-% figure;
+plotPointsets(pointSets);
+
 %% Aligning the centroid of all pointsets to origin
 
 centroids = sum(pointSets,2);
@@ -19,14 +19,16 @@ for i = 1:mat.numOfPointSets
     [meanShape,pointSets(:,:,i)] = align(meanShape,pointSets(:,:,i));
 end
 
-plotPointsets(pointSets,meanShape);
 figure;
+patch(meanShape(1,:),meanShape(2,:),'w');hold on
+plotPointsets(pointSets);
+
+meanShape = findMeanShape(pointSets);
 
 for i = 1:mat.numOfPointSets
     [meanShape,pointSets(:,:,i)] = align(meanShape,pointSets(:,:,i));
 end
 
-plotPointsets(pointSets);
 figure;
-
-meanShape = findMeanShape(pointSets,meanShape);
+patch(meanShape(1,:),meanShape(2,:),'w');hold on
+plotPointsets(pointSets);
