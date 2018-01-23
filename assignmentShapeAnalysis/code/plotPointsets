@@ -1,6 +1,0 @@
-function temp = plotPointsets(pointSets)
-    for i = 1:mat.numOfPointSets
-        scatter(pointSets(1,:,i),pointSets(2,:,i),1);
-        hold on;
-    end
-end
