@@ -38,4 +38,11 @@ figure;
 patch(meanShape(1,:),meanShape(2,:),'w');hold on;
 plotPointsets(pointSets);
 
-%% Now finding the principalmodes of variation using the convariance matrix
+%% Now finding the principal modes of variation using the convariance matrix
+
+flatpointSet = reshape(pointSets,size(pointSets(),1)*size(pointSets(),2),size(pointSets(),3));;
+[V,D] = eig(cov(flatpointSet'));
+tweak = meanShape+reshape(V(:,end),size(pointSets,1),size(pointSets,2));
+figure;
+patch(tweak(1,:),tweak(2,:),'w');hold on;
+patch(meanShape(1,:),meanShape(2,:),'w');hold on;

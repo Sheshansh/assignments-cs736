@@ -37,3 +37,13 @@ numiterations
 figure;
 patch(meanShape(1,:),meanShape(2,:),'w');hold on;
 plotPointsets(pointSets);
+
+flatpointSet = reshape(pointSets,size(pointSets(),1)*size(pointSets(),2),size(pointSets(),3));;
+[V,D] = eig(cov(flatpointSet'));
+toplot = size(D,2);
+tweak = meanShape+reshape(V(:,toplot)*2*sqrt(D(toplot,toplot)),size(pointSets,1),size(pointSets,2));
+figure;
+patch(tweak(1,:),tweak(2,:),'w');hold on;
+patch(meanShape(1,:),meanShape(2,:),'w');hold on;
+tweak = meanShape-reshape(V(:,toplot)*2*sqrt(D(toplot,toplot)),size(pointSets,1),size(pointSets,2));
+patch(tweak(1,:),tweak(2,:),'w');hold on;

@@ -12,7 +12,6 @@ function [ im1,im2 ] = align( raw_im1, raw_im2 )
     norm2 = sqrt(sum(sum(raw_im2.^2,2),1));
     im1 = raw_im1./norm1;
     im2 = raw_im2./norm2;
-    
     temp = im2*im1';
     [U,~,V] = svd(temp);
     R = V*U';
