@@ -1,3 +1,4 @@
+clear;
 mat = load('../data/hands2D.mat');
 pointSets = mat.shapes;
 mean_diff_threshold = 1e-31;
@@ -40,10 +41,16 @@ plotPointsets(pointSets);
 
 flatpointSet = reshape(pointSets,size(pointSets(),1)*size(pointSets(),2),size(pointSets(),3));;
 [V,D] = eig(cov(flatpointSet'));
-toplot = size(D,2);
-tweak = meanShape+reshape(V(:,toplot)*2*sqrt(D(toplot,toplot)),size(pointSets,1),size(pointSets,2));
 figure;
-patch(tweak(1,:),tweak(2,:),'w');hold on;
-patch(meanShape(1,:),meanShape(2,:),'w');hold on;
-tweak = meanShape-reshape(V(:,toplot)*2*sqrt(D(toplot,toplot)),size(pointSets,1),size(pointSets,2));
-patch(tweak(1,:),tweak(2,:),'w');hold on;
+plot(diag(D));
+toplot = size(D,2);
+tweak = meanShape+2*sqrt(D(toplot,toplot))*reshape(V(:,toplot),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape,tweak);
+figure;
+patch(tweak(1,:),tweak(2,:),'r');hold on;
+patch(meanShape(1,:),meanShape(2,:),'g');hold on;
+tweak = meanShape-2*sqrt(D(toplot,toplot))*reshape(V(:,toplot),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape,tweak);
+patch(tweak(1,:),tweak(2,:),'b');hold on;
+plotPointsets(pointSets);
+alpha(0.3);
