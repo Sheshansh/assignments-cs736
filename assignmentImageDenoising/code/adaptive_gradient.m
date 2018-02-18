@@ -1,3 +1,4 @@
 function gradient = adaptive_gradient(a,b,gamma)
-    gradient = 2*(a-b)*gamma./(2*(gamma+abs(a-b)));
+    absdiff = abs(a-b);
+    gradient = gamma*(a-b)/absdiff - gamma*((a-b)./absdiff)./(1+absdiff/gamma);
 end
