@@ -1,0 +1,301 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>main_1</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-18"><meta name="DC.source" content="main_1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Inputting data and setting parameters</a></li><li><a href="#2">Quadratic Prior</a></li><li><a href="#3">Huber Prior</a></li><li><a href="#4">Discontinuity Adaptive Prior</a></li><li><a href="#5">Noisy Image</a></li><li><a href="#6">Noiseless Image</a></li><li><a href="#7">Denoised Image(Quadratic Prior)</a></li><li><a href="#8">Denoised Image(Huber Prior)</a></li><li><a href="#9">Denoised Image(Discontinuity Adaptive Prior)</a></li><li><a href="#10">Report Objective functions</a></li></ul></div><h2>Inputting data and setting parameters<a name="1"></a></h2><pre class="codeinput">clear;
+<span class="comment">% clc;</span>
+tic;
+load(<span class="string">'../data/assignmentImageDenoisingPhantom.mat'</span>)
+
+sample = abs(imageNoisy(1:50,1:50));
+rrmse_noisy_noiseless = RRMSE(imageNoiseless,imageNoisy);
+fprintf(<span class="string">'RRMSE between the noisy and noiseless images is %.4f\n'</span>,rrmse_noisy_noiseless);
+</pre><pre class="codeoutput">RRMSE between the noisy and noiseless images is 0.2986
+</pre><h2>Quadratic Prior<a name="2"></a></h2><pre class="codeinput">opt_alpha = 0.22;
+shiftedmatrices = {circshift(imageNoisy,1,2),circshift(imageNoisy,-1,2),circshift(imageNoisy,1,1),circshift(imageNoisy,-1,1)};
+<span class="comment">% Optimisation</span>
+x = imageNoisy;
+[~,x] = optimise(opt_alpha*1.2,0,x,imageNoisy,shiftedmatrices,@quadratic,@quadratic_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf(<span class="string">'At 1.2*(optimum alpha), RRMSE= %.4f\n'</span>,rrmse);
+x = imageNoisy;
+[~,x] = optimise(opt_alpha*0.8,0,x,imageNoisy,shiftedmatrices,@quadratic,@quadratic_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf(<span class="string">'At 0.8*(optimum alpha), RRMSE= %.4f\n'</span>,rrmse);
+x = imageNoisy;
+[values1,x1] = optimise(opt_alpha,0,x,imageNoisy,shiftedmatrices,@quadratic,@quadratic_gradient);
+
+save(<span class="string">'../results/denoised_quad.mat'</span>,<span class="string">'x1'</span>);
+rrmse = RRMSE(imageNoiseless,x1);
+fprintf(<span class="string">'RRMSE using quadratic prior is %.4f\n'</span>,rrmse);
+fprintf(<span class="string">'The optimal parameters for quadratic prior are alpha = %.4f\n'</span>,opt_alpha);
+</pre><pre class="codeoutput">At 1.2*(optimum alpha), RRMSE= 0.2120
+At 0.8*(optimum alpha), RRMSE= 0.2119
+RRMSE using quadratic prior is 0.2101
+The optimal parameters for quadratic prior are alpha = 0.2200
+</pre><h2>Huber Prior<a name="3"></a></h2><pre class="codeinput">shiftedmatrices = {circshift(imageNoisy,1,2),circshift(imageNoisy,-1,2),circshift(imageNoisy,1,1),circshift(imageNoisy,-1,1)};
+opt_alpha = 0.95;
+opt_gamma = 0.006;
+x = imageNoisy;
+[~,x] = optimise(0.8*opt_alpha,opt_gamma,x,imageNoisy,shiftedmatrices,@huber,@huber_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf(<span class="string">'At 0.8*(optimum alpha) gamma, RRMSE= %.4f\n'</span>,rrmse);
+x = imageNoisy;
+[~,x] = optimise(1,opt_gamma,x,imageNoisy,shiftedmatrices,@huber,@huber_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf(<span class="string">'At alpha=1 gamma, RRMSE= %.4f\n'</span>,rrmse);
+x = imageNoisy;
+[~,x] = optimise(opt_alpha,0.8*opt_gamma,x,imageNoisy,shiftedmatrices,@huber,@huber_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf(<span class="string">'At (optimum alpha) 0.8*gamma, RRMSE= %.4f\n'</span>,rrmse);
+x = imageNoisy;
+[~,x] = optimise(opt_alpha,1.2*opt_gamma,x,imageNoisy,shiftedmatrices,@huber,@huber_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf(<span class="string">'At (optimum alpha) 1.2*gamma, RRMSE= %.4f\n'</span>,rrmse);
+x = imageNoisy;
+[values2,x2] = optimise(opt_alpha,opt_gamma,x,imageNoisy,shiftedmatrices,@huber,@huber_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf(<span class="string">'RRMSE using huber prior is %.4f\n'</span>,rrmse);
+fprintf(<span class="string">'The optimal parameters for huber prior are alpha = %.4f, gamma = %.4f\n'</span>,opt_alpha,opt_gamma);
+save(<span class="string">'../results/denoised_huber.mat'</span>,<span class="string">'x2'</span>);
+</pre><pre class="codeoutput">At 0.8*(optimum alpha) gamma, RRMSE= 0.2197
+At alpha=1 gamma, RRMSE= 0.1881
+At (optimum alpha) 0.8*gamma, RRMSE= 0.0597
+At (optimum alpha) 1.2*gamma, RRMSE= 0.0599
+RRMSE using huber prior is 0.2986
+The optimal parameters for huber prior are alpha = 0.9500, gamma = 0.0060
+</pre><h2>Discontinuity Adaptive Prior<a name="4"></a></h2><pre class="codeinput">shiftedmatrices = {circshift(imageNoisy,1,2),circshift(imageNoisy,-1,2),circshift(imageNoisy,1,1),circshift(imageNoisy,-1,1)};
+opt_alpha = 0.99;
+opt_gamma = 0.0012;
+
+x = imageNoisy;
+[~,x] = optimise(0.8*opt_alpha,opt_gamma,x,imageNoisy,shiftedmatrices,@adaptive,@adaptive_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf(<span class="string">'At 0.8*(optimum alpha) gamma, RRMSE= %.4f\n'</span>,rrmse);
+x = imageNoisy;
+[~,x] = optimise(1,opt_gamma,x,imageNoisy,shiftedmatrices,@adaptive,@adaptive_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf(<span class="string">'At alpha=1 gamma, RRMSE= %.4f\n'</span>,rrmse);
+x = imageNoisy;
+[~,x] = optimise(opt_alpha,0.8*opt_gamma,x,imageNoisy,shiftedmatrices,@adaptive,@adaptive_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf(<span class="string">'At (optimum alpha) 0.8*gamma, RRMSE= %.4f\n'</span>,rrmse);
+x = imageNoisy;
+[~,x] = optimise(opt_alpha,1.2*opt_gamma,x,imageNoisy,shiftedmatrices,@adaptive,@adaptive_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf(<span class="string">'At (optimum alpha) 1.2*gamma, RRMSE= %.4f\n'</span>,rrmse);
+x = imageNoisy;
+[values3,x3] = optimise(opt_alpha,opt_gamma,x,imageNoisy,shiftedmatrices,@adaptive,@adaptive_gradient);
+save(<span class="string">'../results/denoised_adaptive.mat'</span>,<span class="string">'x'</span>);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf(<span class="string">'RRMSE using discontinuity adaptive prior is %.4f\n'</span>,rrmse);
+fprintf(<span class="string">'The optimal parameters for discontinuity adaptive prior are alpha = %.4f, gamma = %.4f\n'</span>,opt_alpha,opt_gamma);
+</pre><pre class="codeoutput">At 0.8*(optimum alpha) gamma, RRMSE= 0.2788
+At alpha=1 gamma, RRMSE= 0.0818
+At (optimum alpha) 0.8*gamma, RRMSE= 0.0621
+At (optimum alpha) 1.2*gamma, RRMSE= 0.0578
+RRMSE using discontinuity adaptive prior is 0.2986
+The optimal parameters for discontinuity adaptive prior are alpha = 0.9900, gamma = 0.0012
+</pre><h2>Noisy Image<a name="5"></a></h2><pre class="codeinput">figure
+imshow(abs(imageNoisy))
+</pre><img vspace="5" hspace="5" src="main_1_01.png" alt=""> <h2>Noiseless Image<a name="6"></a></h2><pre class="codeinput">figure
+imshow(abs(imageNoiseless))
+</pre><img vspace="5" hspace="5" src="main_1_02.png" alt=""> <h2>Denoised Image(Quadratic Prior)<a name="7"></a></h2><pre class="codeinput">figure
+imshow(abs(x1))
+</pre><img vspace="5" hspace="5" src="main_1_03.png" alt=""> <h2>Denoised Image(Huber Prior)<a name="8"></a></h2><pre class="codeinput">figure
+imshow(abs(x2))
+</pre><img vspace="5" hspace="5" src="main_1_04.png" alt=""> <h2>Denoised Image(Discontinuity Adaptive Prior)<a name="9"></a></h2><pre class="codeinput">figure
+imshow(abs(x3))
+</pre><img vspace="5" hspace="5" src="main_1_05.png" alt=""> <h2>Report Objective functions<a name="10"></a></h2><pre class="codeinput">figure
+plot(values1)
+title(<span class="string">'Objective(Quadratic)'</span>)
+figure
+plot(values2)
+title(<span class="string">'Objective(Huber)'</span>)
+figure
+plot(values3)
+title(<span class="string">'Objective(Discontinuity adaptive)'</span>)
+
+toc;
+</pre><pre class="codeoutput">Elapsed time is 101.285163 seconds.
+</pre><img vspace="5" hspace="5" src="main_1_06.png" alt=""> <img vspace="5" hspace="5" src="main_1_07.png" alt=""> <img vspace="5" hspace="5" src="main_1_08.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Inputting data and setting parameters
+clear;
+% clc;
+tic;
+load('../data/assignmentImageDenoisingPhantom.mat')
+
+sample = abs(imageNoisy(1:50,1:50));
+rrmse_noisy_noiseless = RRMSE(imageNoiseless,imageNoisy);
+fprintf('RRMSE between the noisy and noiseless images is %.4f\n',rrmse_noisy_noiseless);
+%% Quadratic Prior
+opt_alpha = 0.22;
+shiftedmatrices = {circshift(imageNoisy,1,2),circshift(imageNoisy,-1,2),circshift(imageNoisy,1,1),circshift(imageNoisy,-1,1)};
+% Optimisation
+x = imageNoisy;
+[~,x] = optimise(opt_alpha*1.2,0,x,imageNoisy,shiftedmatrices,@quadratic,@quadratic_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf('At 1.2*(optimum alpha), RRMSE= %.4f\n',rrmse);
+x = imageNoisy;
+[~,x] = optimise(opt_alpha*0.8,0,x,imageNoisy,shiftedmatrices,@quadratic,@quadratic_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf('At 0.8*(optimum alpha), RRMSE= %.4f\n',rrmse);
+x = imageNoisy;
+[values1,x1] = optimise(opt_alpha,0,x,imageNoisy,shiftedmatrices,@quadratic,@quadratic_gradient);
+
+save('../results/denoised_quad.mat','x1');
+rrmse = RRMSE(imageNoiseless,x1);
+fprintf('RRMSE using quadratic prior is %.4f\n',rrmse);
+fprintf('The optimal parameters for quadratic prior are alpha = %.4f\n',opt_alpha);
+
+%% Huber Prior
+shiftedmatrices = {circshift(imageNoisy,1,2),circshift(imageNoisy,-1,2),circshift(imageNoisy,1,1),circshift(imageNoisy,-1,1)};
+opt_alpha = 0.95;
+opt_gamma = 0.006;
+x = imageNoisy;
+[~,x] = optimise(0.8*opt_alpha,opt_gamma,x,imageNoisy,shiftedmatrices,@huber,@huber_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf('At 0.8*(optimum alpha) gamma, RRMSE= %.4f\n',rrmse);
+x = imageNoisy;
+[~,x] = optimise(1,opt_gamma,x,imageNoisy,shiftedmatrices,@huber,@huber_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf('At alpha=1 gamma, RRMSE= %.4f\n',rrmse);
+x = imageNoisy;
+[~,x] = optimise(opt_alpha,0.8*opt_gamma,x,imageNoisy,shiftedmatrices,@huber,@huber_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf('At (optimum alpha) 0.8*gamma, RRMSE= %.4f\n',rrmse);
+x = imageNoisy;
+[~,x] = optimise(opt_alpha,1.2*opt_gamma,x,imageNoisy,shiftedmatrices,@huber,@huber_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf('At (optimum alpha) 1.2*gamma, RRMSE= %.4f\n',rrmse);
+x = imageNoisy;
+[values2,x2] = optimise(opt_alpha,opt_gamma,x,imageNoisy,shiftedmatrices,@huber,@huber_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf('RRMSE using huber prior is %.4f\n',rrmse);
+fprintf('The optimal parameters for huber prior are alpha = %.4f, gamma = %.4f\n',opt_alpha,opt_gamma);
+save('../results/denoised_huber.mat','x2');
+
+%% Discontinuity Adaptive Prior
+shiftedmatrices = {circshift(imageNoisy,1,2),circshift(imageNoisy,-1,2),circshift(imageNoisy,1,1),circshift(imageNoisy,-1,1)};
+opt_alpha = 0.99;
+opt_gamma = 0.0012;
+
+x = imageNoisy;
+[~,x] = optimise(0.8*opt_alpha,opt_gamma,x,imageNoisy,shiftedmatrices,@adaptive,@adaptive_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf('At 0.8*(optimum alpha) gamma, RRMSE= %.4f\n',rrmse);
+x = imageNoisy;
+[~,x] = optimise(1,opt_gamma,x,imageNoisy,shiftedmatrices,@adaptive,@adaptive_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf('At alpha=1 gamma, RRMSE= %.4f\n',rrmse);
+x = imageNoisy;
+[~,x] = optimise(opt_alpha,0.8*opt_gamma,x,imageNoisy,shiftedmatrices,@adaptive,@adaptive_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf('At (optimum alpha) 0.8*gamma, RRMSE= %.4f\n',rrmse);
+x = imageNoisy;
+[~,x] = optimise(opt_alpha,1.2*opt_gamma,x,imageNoisy,shiftedmatrices,@adaptive,@adaptive_gradient);
+rrmse = RRMSE(imageNoiseless,x);
+fprintf('At (optimum alpha) 1.2*gamma, RRMSE= %.4f\n',rrmse);
+x = imageNoisy;
+[values3,x3] = optimise(opt_alpha,opt_gamma,x,imageNoisy,shiftedmatrices,@adaptive,@adaptive_gradient);
+save('../results/denoised_adaptive.mat','x');
+rrmse = RRMSE(imageNoiseless,x);
+fprintf('RRMSE using discontinuity adaptive prior is %.4f\n',rrmse);
+fprintf('The optimal parameters for discontinuity adaptive prior are alpha = %.4f, gamma = %.4f\n',opt_alpha,opt_gamma);
+
+%% Noisy Image
+figure
+imshow(abs(imageNoisy))
+%% Noiseless Image
+figure 
+imshow(abs(imageNoiseless))
+%% Denoised Image(Quadratic Prior)
+figure
+imshow(abs(x1))
+%% Denoised Image(Huber Prior)
+figure
+imshow(abs(x2))
+%% Denoised Image(Discontinuity Adaptive Prior)
+figure
+imshow(abs(x3))
+
+%% Report Objective functions
+figure
+plot(values1)
+title('Objective(Quadratic)')
+figure 
+plot(values2)
+title('Objective(Huber)')
+figure
+plot(values3)
+title('Objective(Discontinuity adaptive)')
+
+toc;
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,167 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>main_2</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-02-18"><meta name="DC.source" content="main_2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Inputting data and setting parameters</a></li><li><a href="#2">Quadratic Prior</a></li><li><a href="#3">Discontinuity Adaptive Prior</a></li><li><a href="#4">Quadratic Prior</a></li><li><a href="#5">Huber Prior</a></li><li><a href="#6">Adaptive</a></li><li><a href="#7">Noisy</a></li><li><a href="#8">Report Objective functions</a></li></ul></div><h2>Inputting data and setting parameters<a name="1"></a></h2><pre class="codeinput">clear;
+clc;
+tic;
+load(<span class="string">'../data/assignmentImageDenoisingBrainNoisy.mat'</span>)
+
+sample = real(imageNoisy(1:50,1:50));
+sigma = std(sample(:));
+fprintf(<span class="string">'The noise level in the real part of the image is %.4f\n'</span>,sigma);
+</pre><pre class="codeoutput">The noise level in the real part of the image is 0.0609
+</pre><h2>Quadratic Prior<a name="2"></a></h2><pre class="codeinput">x1 = imageNoisy;
+shiftedmatrices = {circshift(imageNoisy,1,2),circshift(imageNoisy,-1,2),circshift(imageNoisy,1,1),circshift(imageNoisy,-1,1)};
+alpha = 0.22;
+gamma = 0; <span class="comment">% dummy</span>
+<span class="comment">% Optimisation</span>
+[values1,x1] = optimise(alpha,gamma,x1,imageNoisy,shiftedmatrices,@quadratic,@quadratic_gradient);
+save(<span class="string">'../results/denoised_quad.mat'</span>,<span class="string">'x1'</span>);
+
+<span class="comment">% %% Huber Prior</span>
+x2 = imageNoisy;
+shiftedmatrices = {circshift(imageNoisy,1,2),circshift(imageNoisy,-1,2),circshift(imageNoisy,1,1),circshift(imageNoisy,-1,1)};
+tau = 0.000001;
+alpha = 0.95;
+gamma = 0.006;
+<span class="comment">% Optimisation</span>
+[values2,x2] = optimise(alpha,gamma,x2,imageNoisy,shiftedmatrices,@huber,@huber_gradient);
+save(<span class="string">'../results/denoised_huber.mat'</span>,<span class="string">'x2'</span>);
+</pre><h2>Discontinuity Adaptive Prior<a name="3"></a></h2><pre class="codeinput">x3 = imageNoisy;
+shiftedmatrices = {circshift(imageNoisy,1,2),circshift(imageNoisy,-1,2),circshift(imageNoisy,1,1),circshift(imageNoisy,-1,1)};
+alpha = 0.99;
+gamma = 0.0015;
+<span class="comment">% Optimisation</span>
+[values3,x3] = optimise(alpha,gamma,x3,imageNoisy,shiftedmatrices,@adaptive,@adaptive_gradient);
+save(<span class="string">'../results/denoised_adaptive.mat'</span>,<span class="string">'x3'</span>);
+</pre><h2>Quadratic Prior<a name="4"></a></h2><pre class="codeinput">figure, imshow(abs(x1));
+</pre><img vspace="5" hspace="5" src="main_2_01.png" alt=""> <h2>Huber Prior<a name="5"></a></h2><pre class="codeinput">figure, imshow(abs(x2));
+</pre><img vspace="5" hspace="5" src="main_2_02.png" alt=""> <h2>Adaptive<a name="6"></a></h2><pre class="codeinput">figure, imshow(abs(x3));
+</pre><img vspace="5" hspace="5" src="main_2_03.png" alt=""> <h2>Noisy<a name="7"></a></h2><pre class="codeinput">figure, imshow(abs(imageNoisy));
+</pre><img vspace="5" hspace="5" src="main_2_04.png" alt=""> <h2>Report Objective functions<a name="8"></a></h2><pre class="codeinput">figure,plot(values1),title(<span class="string">'Objective(Quadratic)'</span>);
+figure,plot(values2),title(<span class="string">'Objective(Huber)'</span>);
+figure,plot(values3),title(<span class="string">'Objective(Discontinuity Adaptive)'</span>);
+
+toc;
+</pre><pre class="codeoutput">Elapsed time is 20.343788 seconds.
+</pre><img vspace="5" hspace="5" src="main_2_05.png" alt=""> <img vspace="5" hspace="5" src="main_2_06.png" alt=""> <img vspace="5" hspace="5" src="main_2_07.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Inputting data and setting parameters
+clear;
+clc;
+tic;
+load('../data/assignmentImageDenoisingBrainNoisy.mat')
+
+sample = real(imageNoisy(1:50,1:50));
+sigma = std(sample(:));
+fprintf('The noise level in the real part of the image is %.4f\n',sigma);
+%% Quadratic Prior
+x1 = imageNoisy;
+shiftedmatrices = {circshift(imageNoisy,1,2),circshift(imageNoisy,-1,2),circshift(imageNoisy,1,1),circshift(imageNoisy,-1,1)};
+alpha = 0.22;
+gamma = 0; % dummy
+% Optimisation
+[values1,x1] = optimise(alpha,gamma,x1,imageNoisy,shiftedmatrices,@quadratic,@quadratic_gradient);
+save('../results/denoised_quad.mat','x1');
+
+% %% Huber Prior
+x2 = imageNoisy;
+shiftedmatrices = {circshift(imageNoisy,1,2),circshift(imageNoisy,-1,2),circshift(imageNoisy,1,1),circshift(imageNoisy,-1,1)};
+tau = 0.000001;
+alpha = 0.95;
+gamma = 0.006;
+% Optimisation
+[values2,x2] = optimise(alpha,gamma,x2,imageNoisy,shiftedmatrices,@huber,@huber_gradient);
+save('../results/denoised_huber.mat','x2');
+
+%% Discontinuity Adaptive Prior
+x3 = imageNoisy;
+shiftedmatrices = {circshift(imageNoisy,1,2),circshift(imageNoisy,-1,2),circshift(imageNoisy,1,1),circshift(imageNoisy,-1,1)};
+alpha = 0.99;
+gamma = 0.0015;
+% Optimisation
+[values3,x3] = optimise(alpha,gamma,x3,imageNoisy,shiftedmatrices,@adaptive,@adaptive_gradient);
+save('../results/denoised_adaptive.mat','x3');
+
+%% Quadratic Prior
+figure, imshow(abs(x1));
+%% Huber Prior
+figure, imshow(abs(x2));
+%% Adaptive
+figure, imshow(abs(x3));
+%% Noisy
+figure, imshow(abs(imageNoisy));
+
+%% Report Objective functions
+figure,plot(values1),title('Objective(Quadratic)');
+figure,plot(values2),title('Objective(Huber)');
+figure,plot(values3),title('Objective(Discontinuity Adaptive)');
+
+toc;
+##### SOURCE END #####
+--></body></html>
