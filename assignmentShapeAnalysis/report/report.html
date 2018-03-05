@@ -1,0 +1,469 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Report</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-01-26"><meta name="DC.source" content="q1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body>
+
+<h1 align="center">Question 1</h1>
+    <div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Plotting the initial pointsets</a></li><li><a href="#3">Aligning the centroid of all pointsets to origin</a></li><li><a href="#4">Doing the alternate minimisation of Procrustes distance wrt scale and rotation until there is no significant change</a></li><li><a href="#5">Plotting the pointsets along with the computed mean shape</a></li><li><a href="#6">Finding the principal modes of variation and plotting the variances along modes of variation, note that only a very.few modes are significant enough.</a></li><li><a href="#7">Plotting the mean shape, aligned pointsets along with principal modes of variation (+- 2 sigma)</a></li></ul></div><pre class="codeinput">mat = load(<span class="string">'../data/ellipses2D.mat'</span>);
+pointSets = mat.pointSets;
+mean_diff_threshold = 1e-14;
+tic;
+</pre><h2>Plotting the initial pointsets<a name="2"></a></h2><pre class="codeinput">figure;
+plotPointsets(pointSets);
+title(<span class="string">'Initial pointsets'</span>)
+</pre><img vspace="5" hspace="5" src="../results/q1_01.png" alt=""> <h2>Aligning the centroid of all pointsets to origin<a name="3"></a></h2><pre class="codeinput">centroids = sum(pointSets,2);
+centroids = repmat(centroids,1,size(pointSets,2),1);
+centroids = centroids./size(centroids,2);
+pointSets = pointSets - centroids;
+</pre><h2>Doing the alternate minimisation of Procrustes distance wrt scale and rotation until there is no significant change<a name="4"></a></h2><pre class="codeinput">meanShape = findMeanShape(pointSets);
+oldmeanShape = zeros(size(meanShape));
+
+numiterations = 0;
+
+<span class="keyword">while</span> sum(sum((oldmeanShape-meanShape).^2)) &gt; mean_diff_threshold
+
+    <span class="keyword">for</span> i = 1:mat.numOfPointSets
+        [temp,pointSets(:,:,i)] = align(meanShape,pointSets(:,:,i));
+    <span class="keyword">end</span>
+
+    oldmeanShape = meanShape;
+    meanShape = findMeanShape(pointSets);
+    numiterations = numiterations + 1;
+
+<span class="keyword">end</span>
+
+figure;
+plotPointsets(pointSets);
+title(<span class="string">'Aligned pointsets and mean shape'</span>)
+</pre><img vspace="5" hspace="5" src="../results/q1_03.png" alt=""> <h2>Finding the principal modes of variation and plotting the variances along modes of variation, note that only a very.few modes are significant enough.<a name="6"></a></h2><pre class="codeinput">flatpointSet = reshape(pointSets,size(pointSets(),1)*size(pointSets(),2),size(pointSets(),3));
+[V,D] = eig(cov(flatpointSet'));
+figure;
+plot(diag(D));
+title(<span class="string">'variances along modes of variation sorted in increasing order'</span>)
+ylabel(<span class="string">'eigenvalue'</span>)
+xlabel(<span class="string">'modes'</span>)
+</pre><img vspace="5" hspace="5" src="../results/q1_04.png" alt=""> <h2>Plotting the mean shape, aligned pointsets along with principal modes of variation (+- 2 sigma)<a name="7"></a></h2><pre class="codeinput">toplot = size(D,2);
+tweak = meanShape+2*sqrt(D(toplot,toplot))*reshape(V(:,toplot),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape,tweak);
+figure;
+patch(tweak(1,:),tweak(2,:),<span class="string">'r'</span>);hold <span class="string">on</span>;
+patch(meanShape(1,:),meanShape(2,:),<span class="string">'g'</span>);hold <span class="string">on</span>;
+tweak = meanShape-2*sqrt(D(toplot,toplot))*reshape(V(:,toplot),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape,tweak);
+patch(tweak(1,:),tweak(2,:),<span class="string">'b'</span>);hold <span class="string">on</span>;
+plotPointsets(pointSets);
+alpha(0.3);
+title(<span class="string">'Aligned pointsets, mean shape and principal mode of variation'</span>)
+legend(<span class="string">'mean+2*SD'</span>,<span class="string">'mean'</span>,<span class="string">'mean-2*SD'</span>)
+
+toc;
+</pre><pre class="codeoutput">Elapsed time is 10.452329 seconds.
+</pre><img vspace="5" hspace="5" src="../results/q1_05.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+mat = load('../data/ellipses2D.mat');
+pointSets = mat.pointSets;
+mean_diff_threshold = 1e-14;
+tic;
+%% Plotting the initial pointsets
+
+figure;
+plotPointsets(pointSets);
+title('Initial pointsets')
+
+%% Aligning the centroid of all pointsets to origin
+
+centroids = sum(pointSets,2);
+centroids = repmat(centroids,1,size(pointSets,2),1);
+centroids = centroids./size(centroids,2);
+pointSets = pointSets - centroids;
+
+%% Doing the alternate minimisation of Procrustes distance wrt scale and rotation until there is no significant change
+
+meanShape = findMeanShape(pointSets);
+oldmeanShape = zeros(size(meanShape));
+
+numiterations = 0;
+
+while sum(sum((oldmeanShape-meanShape).^2)) > mean_diff_threshold
+    
+    for i = 1:mat.numOfPointSets
+        [temp,pointSets(:,:,i)] = align(meanShape,pointSets(:,:,i));
+    end
+
+    oldmeanShape = meanShape;
+    meanShape = findMeanShape(pointSets);    
+    numiterations = numiterations + 1;
+
+end
+
+figure;
+
+%% Plotting the pointsets along with the computed mean shape
+
+patch(meanShape(1,:),meanShape(2,:),'w');hold on;
+plotPointsets(pointSets);
+title('Aligned pointsets and mean shape')
+
+%% Finding the principal modes of variation and plotting the variances along modes of variation, note that only a very.few modes are significant enough.
+
+flatpointSet = reshape(pointSets,size(pointSets(),1)*size(pointSets(),2),size(pointSets(),3));
+[V,D] = eig(cov(flatpointSet'));
+figure;
+plot(diag(D));
+title('variances along modes of variation sorted in increasing order')
+ylabel('eigenvalue')
+xlabel('modes')
+
+%% Plotting the mean shape, aligned pointsets along with principal modes of variation (+- 2 sigma)
+
+toplot = size(D,2);
+tweak = meanShape+2*sqrt(D(toplot,toplot))*reshape(V(:,toplot),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape,tweak);
+figure;
+patch(tweak(1,:),tweak(2,:),'r');hold on;
+patch(meanShape(1,:),meanShape(2,:),'g');hold on;
+tweak = meanShape-2*sqrt(D(toplot,toplot))*reshape(V(:,toplot),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape,tweak);
+patch(tweak(1,:),tweak(2,:),'b');hold on;
+plotPointsets(pointSets);
+alpha(0.3);
+title('Aligned pointsets, mean shape and principal mode of variation')
+legend('mean+2*SD','mean','mean-2*SD')
+
+toc;
+##### SOURCE END #####
+-->
+
+<h1 align="center">Question 2</h1>
+
+<div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Plotting the initial pointsets</a></li><li><a href="#3">Aligning the centroid of all pointsets to origin</a></li><li><a href="#4">Doing the alternate minimisation of Procrustes distance wrt scale and rotation until there is no significant change</a></li><li><a href="#5">Plotting the pointsets along with the computed mean shape</a></li><li><a href="#6">Finding the principal modes of variation and plotting the variances along modes of variation, note that only a very.few modes are significant enough.</a></li><li><a href="#7">Plotting the mean shape, aligned pointsets along with principal modes of variation (+- 2 sigma)</a></li></ul></div><pre class="codeinput">clear;
+mat = load(<span class="string">'../data/hands2D.mat'</span>);
+pointSets = mat.shapes;
+mean_diff_threshold = 1e-31;
+tic;
+</pre><h2>Plotting the initial pointsets<a name="2"></a></h2><pre class="codeinput">figure;
+plotPointsets(pointSets);
+title(<span class="string">'Initial pointsets'</span>);
+</pre><img vspace="5" hspace="5" src="../results/q2_01.png" alt=""> <h2>Aligning the centroid of all pointsets to origin<a name="3"></a></h2><pre class="codeinput">centroids = sum(pointSets,2);
+centroids = repmat(centroids,1,size(pointSets,2),1);
+centroids = centroids./size(centroids,2);
+pointSets = pointSets - centroids;
+</pre><h2>Doing the alternate minimisation of Procrustes distance wrt scale and rotation until there is no significant change<a name="4"></a></h2><pre class="codeinput">meanShape = findMeanShape(pointSets);
+oldmeanShape = zeros(size(meanShape));
+
+numiterations = 0;
+
+<span class="keyword">while</span> sum(sum((oldmeanShape-meanShape).^2)) &gt; mean_diff_threshold
+
+    <span class="keyword">for</span> i = 1:size(pointSets,3)
+        [temp,pointSets(:,:,i)] = align(meanShape,pointSets(:,:,i));
+    <span class="keyword">end</span>
+
+    oldmeanShape = meanShape;
+    meanShape = findMeanShape(pointSets);
+
+    numiterations = numiterations + 1;
+<span class="keyword">end</span>
+
+figure;
+plotPointsets(pointSets);
+title(<span class="string">'Aligned pointsets and mean shape'</span>)
+</pre><img vspace="5" hspace="5" src="../results/q2_03.png" alt=""> <h2>Finding the principal modes of variation and plotting the variances along modes of variation, note that only a very.few modes are significant enough.<a name="6"></a></h2><pre class="codeinput">flatpointSet = reshape(pointSets,size(pointSets(),1)*size(pointSets(),2),size(pointSets(),3));;
+[V,D] = eig(cov(flatpointSet'));
+figure;
+plot(diag(D));
+title(<span class="string">'variances along modes of variation sorted in increasing order'</span>)
+ylabel(<span class="string">'eigenvalue'</span>)
+xlabel(<span class="string">'modes'</span>)
+</pre><img vspace="5" hspace="5" src="../results/q2_04.png" alt=""> <h2>Plotting the mean shape, aligned pointsets along with principal modes of variation (+- 2 sigma)<a name="7"></a></h2><pre class="codeinput">toplot = size(D,2);
+tweak = meanShape+2*sqrt(D(toplot,toplot))*reshape(V(:,toplot),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape,tweak);
+figure;
+patch(tweak(1,:),tweak(2,:),<span class="string">'r'</span>);hold <span class="string">on</span>;
+patch(meanShape(1,:),meanShape(2,:),<span class="string">'g'</span>);hold <span class="string">on</span>;
+tweak = meanShape-2*sqrt(D(toplot,toplot))*reshape(V(:,toplot),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape,tweak);
+patch(tweak(1,:),tweak(2,:),<span class="string">'b'</span>);hold <span class="string">on</span>;
+plotPointsets(pointSets);
+alpha(0.3);
+title(<span class="string">'Aligned pointsets, mean shape and principal mode of variation'</span>)
+legend(<span class="string">'mean+2*SD'</span>,<span class="string">'mean'</span>,<span class="string">'mean-2*SD'</span>)
+
+toc;
+</pre><pre class="codeoutput">Elapsed time is 2.466611 seconds.
+</pre><img vspace="5" hspace="5" src="../results/q2_05.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear;
+mat = load('../data/hands2D.mat');
+pointSets = mat.shapes;
+mean_diff_threshold = 1e-31;
+tic;
+%% Plotting the initial pointsets
+
+figure;
+plotPointsets(pointSets);
+title('Initial pointsets');
+
+%% Aligning the centroid of all pointsets to origin
+
+centroids = sum(pointSets,2);
+centroids = repmat(centroids,1,size(pointSets,2),1);
+centroids = centroids./size(centroids,2);
+pointSets = pointSets - centroids;
+
+%% Doing the alternate minimisation of Procrustes distance wrt scale and rotation until there is no significant change
+
+meanShape = findMeanShape(pointSets);
+oldmeanShape = zeros(size(meanShape));
+
+numiterations = 0;
+
+while sum(sum((oldmeanShape-meanShape).^2)) > mean_diff_threshold
+
+    for i = 1:size(pointSets,3)
+        [temp,pointSets(:,:,i)] = align(meanShape,pointSets(:,:,i));
+    end
+
+    oldmeanShape = meanShape;
+    meanShape = findMeanShape(pointSets);
+    
+    numiterations = numiterations + 1;
+end
+
+figure;
+
+%% Plotting the pointsets along with the computed mean shape
+
+patch(meanShape(1,:),meanShape(2,:),'w');hold on;
+plotPointsets(pointSets);
+title('Aligned pointsets and mean shape')
+
+%% Finding the principal modes of variation and plotting the variances along modes of variation, note that only a very.few modes are significant enough.
+
+flatpointSet = reshape(pointSets,size(pointSets(),1)*size(pointSets(),2),size(pointSets(),3));;
+[V,D] = eig(cov(flatpointSet'));
+figure;
+plot(diag(D));
+title('variances along modes of variation sorted in increasing order')
+ylabel('eigenvalue')
+xlabel('modes')
+
+%% Plotting the mean shape, aligned pointsets along with principal modes of variation (+- 2 sigma)
+
+toplot = size(D,2);
+tweak = meanShape+2*sqrt(D(toplot,toplot))*reshape(V(:,toplot),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape,tweak);
+figure;
+patch(tweak(1,:),tweak(2,:),'r');hold on;
+patch(meanShape(1,:),meanShape(2,:),'g');hold on;
+tweak = meanShape-2*sqrt(D(toplot,toplot))*reshape(V(:,toplot),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape,tweak);
+patch(tweak(1,:),tweak(2,:),'b');hold on;
+plotPointsets(pointSets);
+alpha(0.3);
+title('Aligned pointsets, mean shape and principal mode of variation')
+legend('mean+2*SD','mean','mean-2*SD')
+
+toc;
+##### SOURCE END #####
+-->
+
+<h1 align="center">Question 3</h1>
+
+<div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Plotting the initial pointsets</a></li><li><a href="#3">Aligning the centroid of all pointsets to origin</a></li><li><a href="#4">Doing the alternate minimisation of Procrustes distance wrt scale and rotation until there is no significant change</a></li><li><a href="#5">Plotting the pointsets along with the computed mean shape</a></li><li><a href="#6">Finding the principal modes of variation and plotting the variances along modes of variation, note that only a very.few modes are significant enough.</a></li><li><a href="#7">Plotting the mean shape, aligned pointsets along with principal modes of variation (+- 2 sigma)</a></li></ul></div><pre class="codeinput">clear;
+mat = load(<span class="string">'../data/bone3D.mat'</span>);
+pointSets = mat.shapesTotal;
+triIndices = mat.TriangleIndex;
+mean_diff_threshold = 1e-31;
+tic;
+</pre><h2>Plotting the initial pointsets<a name="2"></a></h2><pre class="codeinput">figure;
+plotPointsets(pointSets);
+title(<span class="string">'Initial pointsets'</span>)
+</pre><img vspace="5" hspace="5" src="../results/q3_01.png" alt=""> <h2>Aligning the centroid of all pointsets to origin<a name="3"></a></h2><pre class="codeinput">centroids = sum(pointSets,2);
+centroids = repmat(centroids,1,size(pointSets,2),1);
+centroids = centroids./size(centroids,2);
+pointSets = pointSets - centroids;
+</pre><h2>Doing the alternate minimisation of Procrustes distance wrt scale and rotation until there is no significant change<a name="4"></a></h2><pre class="codeinput">meanShape = findMeanShape(pointSets);
+oldmeanShape = zeros(size(meanShape));
+
+numiterations = 0;
+
+<span class="keyword">while</span> sum(sum((oldmeanShape-meanShape).^2)) &gt; mean_diff_threshold
+
+    <span class="keyword">for</span> i = 1:size(pointSets,3)
+        [temp,pointSets(:,:,i)] = align(meanShape,pointSets(:,:,i));
+    <span class="keyword">end</span>
+
+    oldmeanShape = meanShape;
+    meanShape = findMeanShape(pointSets);
+
+    numiterations = numiterations + 1;
+<span class="keyword">end</span>
+
+figure;
+plotPointsets(pointSets);
+title(<span class="string">'Aligned pointsets and mean shape'</span>)
+</pre><img vspace="5" hspace="5" src="../results/q3_03.png" alt=""> <h2>Finding the principal modes of variation and plotting the variances along modes of variation, note that only a very.few modes are significant enough.<a name="6"></a></h2><pre class="codeinput">flatpointSet = reshape(pointSets,size(pointSets(),1)*size(pointSets(),2),size(pointSets(),3));
+[V,D] = eig(cov(flatpointSet'));
+figure;
+plot(diag(D));
+title(<span class="string">'variances along modes of variation sorted in increasing order'</span>)
+ylabel(<span class="string">'eigenvalue'</span>)
+xlabel(<span class="string">'modes'</span>)
+</pre><img vspace="5" hspace="5" src="../results/q3_04.png" alt=""> <h2>Plotting the mean shape, aligned pointsets along with principal modes of variation (+- 2 sigma)<a name="7"></a></h2><pre class="codeinput">tweak = meanShape+2*sqrt(D(end,end))*reshape(V(:,end),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape, tweak);
+figure;
+
+trimesh(triIndices,tweak(1,:),tweak(2,:),tweak(3,:),<span class="string">'EdgeColor'</span> , [1 0 0]);hold <span class="string">on</span>;
+trimesh(triIndices,meanShape(1,:),meanShape(2,:),meanShape(3,:),<span class="string">'EdgeColor'</span> , [0 1 0]);hold <span class="string">on</span>;
+tweak = meanShape-2*sqrt(D(end,end))*reshape(V(:,end),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape, tweak);
+trimesh(triIndices,tweak(1,:),tweak(2,:),tweak(3,:),<span class="string">'EdgeColor'</span> , [0 0 1]);hold <span class="string">on</span>;
+plotPointsets(pointSets);
+title(<span class="string">'Aligned pointsets, mean shape and principal mode of variation'</span>)
+legend(<span class="string">'mean+2*SD'</span>,<span class="string">'mean'</span>,<span class="string">'mean-2*SD'</span>)
+
+toc;
+</pre><pre class="codeoutput">Elapsed time is 3.249597 seconds.
+</pre><img vspace="5" hspace="5" src="../results/q3_05.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear;
+mat = load('../data/bone3D.mat');
+pointSets = mat.shapesTotal;
+triIndices = mat.TriangleIndex;
+mean_diff_threshold = 1e-31;
+tic;
+%% Plotting the initial pointsets
+
+figure;
+plotPointsets(pointSets);
+title('Initial pointsets')
+
+%% Aligning the centroid of all pointsets to origin
+
+centroids = sum(pointSets,2);
+centroids = repmat(centroids,1,size(pointSets,2),1);
+centroids = centroids./size(centroids,2);
+pointSets = pointSets - centroids;
+
+%% Doing the alternate minimisation of Procrustes distance wrt scale and rotation until there is no significant change
+
+meanShape = findMeanShape(pointSets);
+oldmeanShape = zeros(size(meanShape));
+
+numiterations = 0;
+
+while sum(sum((oldmeanShape-meanShape).^2)) > mean_diff_threshold
+
+    for i = 1:size(pointSets,3)
+        [temp,pointSets(:,:,i)] = align(meanShape,pointSets(:,:,i));
+    end
+
+    oldmeanShape = meanShape;
+    meanShape = findMeanShape(pointSets);
+    
+    numiterations = numiterations + 1;
+end
+
+figure;
+
+%% Plotting the pointsets along with the computed mean shape
+
+trimesh(triIndices,meanShape(1,:),meanShape(2,:),meanShape(3,:));hold on;
+plotPointsets(pointSets);
+title('Aligned pointsets and mean shape')
+
+%% Finding the principal modes of variation and plotting the variances along modes of variation, note that only a very.few modes are significant enough.
+
+flatpointSet = reshape(pointSets,size(pointSets(),1)*size(pointSets(),2),size(pointSets(),3));
+[V,D] = eig(cov(flatpointSet'));
+figure;
+plot(diag(D));
+title('variances along modes of variation sorted in increasing order')
+ylabel('eigenvalue')
+xlabel('modes')
+
+%% Plotting the mean shape, aligned pointsets along with principal modes of variation (+- 2 sigma)
+tweak = meanShape+2*sqrt(D(end,end))*reshape(V(:,end),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape, tweak);
+figure;
+
+trimesh(triIndices,tweak(1,:),tweak(2,:),tweak(3,:),'EdgeColor' , [1 0 0]);hold on;
+trimesh(triIndices,meanShape(1,:),meanShape(2,:),meanShape(3,:),'EdgeColor' , [0 1 0]);hold on;
+tweak = meanShape-2*sqrt(D(end,end))*reshape(V(:,end),size(pointSets,1),size(pointSets,2));
+[~,tweak] = align(meanShape, tweak);
+trimesh(triIndices,tweak(1,:),tweak(2,:),tweak(3,:),'EdgeColor' , [0 0 1]);hold on;
+plotPointsets(pointSets);
+title('Aligned pointsets, mean shape and principal mode of variation')
+legend('mean+2*SD','mean','mean-2*SD')
+
+toc;
+##### SOURCE END #####
+-->
+
+</body></html>
