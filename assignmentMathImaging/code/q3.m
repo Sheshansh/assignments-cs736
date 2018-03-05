@@ -21,6 +21,7 @@ imagesc(reconstructed_image);colormap(gray);title('Reconstructed Chest Image for
 
 %% Phantom Image
 load('../data/myPhantom.mat');
+figure;
 imagesc(imageAC);colormap(gray);title('Original Phantom Image');
 rrmse = zeros(181,1);
 wb = waitbar(0,'Please wait...');
