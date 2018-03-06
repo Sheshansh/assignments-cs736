@@ -77,13 +77,16 @@ wb = waitbar(0,<span class="string">'Please wait...'</span>);
 <span class="keyword">end</span>
 close(wb);
 figure;
-plot(rrmse);
-[~,theta] = min(rrmse);
+plot(0:180,rrmse);title(<span class="string">'RRMSE vs theta'</span>);
+xlabel(<span class="string">'theta (degrees)'</span>);
+ylabel(<span class="string">'RRMSE (original,reconstructed image)'</span>);[~,theta] = min(rrmse);
 theta = theta-1;
 fprintf(<span class="string">'The optimal angle is theta = %d degrees'</span>,theta);
 reconstructed_image = iradon(radon(imageAC,theta:1:theta+150),theta:1:theta+150);
-imagesc(reconstructed_image);colormap(gray);title(<span class="string">'Reconstructed Chest Image'</span>);
-</pre><pre class="codeoutput">The optimal angle is theta = 53 degrees</pre><img vspace="5" hspace="5" src="q3_01.png" alt=""> <img vspace="5" hspace="5" src="q3_02.png" alt=""> <h2>Phantom Image<a name="2"></a></h2><pre class="codeinput">load(<span class="string">'../data/myPhantom.mat'</span>);
+figure;
+imagesc(reconstructed_image);colormap(gray);title(<span class="string">'Reconstructed Chest Image for optimal theta'</span>);
+</pre><pre class="codeoutput">The optimal angle is theta = 53 degrees</pre><img vspace="5" hspace="5" src="q3_01.png" alt=""> <img vspace="5" hspace="5" src="q3_02.png" alt=""> <img vspace="5" hspace="5" src="q3_03.png" alt=""> <h2>Phantom Image<a name="2"></a></h2><pre class="codeinput">load(<span class="string">'../data/myPhantom.mat'</span>);
+figure;
 imagesc(imageAC);colormap(gray);title(<span class="string">'Original Phantom Image'</span>);
 rrmse = zeros(181,1);
 wb = waitbar(0,<span class="string">'Please wait...'</span>);
@@ -94,13 +97,16 @@ wb = waitbar(0,<span class="string">'Please wait...'</span>);
 <span class="keyword">end</span>
 close(wb);
 figure;
-plot(rrmse);
+plot(0:180,rrmse);title(<span class="string">'RRMSE vs theta'</span>);
+xlabel(<span class="string">'theta (degrees)'</span>);
+ylabel(<span class="string">'RRMSE (original,reconstructed image)'</span>);
 [~,theta] = min(rrmse);
 theta = theta-1;
 fprintf(<span class="string">'The optimal angle is theta = %d degrees'</span>,theta);
 reconstructed_image = iradon(radon(imageAC,theta:1:theta+150),theta:1:theta+150);
-imagesc(reconstructed_image);colormap(gray);title(<span class="string">'Reconstructed Phantom Image'</span>);
-</pre><pre class="codeoutput">The optimal angle is theta = 105 degrees</pre><img vspace="5" hspace="5" src="q3_03.png" alt=""> <img vspace="5" hspace="5" src="q3_04.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+figure;
+imagesc(reconstructed_image);colormap(gray);title(<span class="string">'Reconstructed Phantom Image for optimal theta'</span>);
+</pre><pre class="codeoutput">The optimal angle is theta = 105 degrees</pre><img vspace="5" hspace="5" src="q3_04.png" alt=""> <img vspace="5" hspace="5" src="q3_05.png" alt=""> <img vspace="5" hspace="5" src="q3_06.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% CT Chest Image
 load('../data/CT_Chest.mat');
@@ -114,15 +120,18 @@ for theta = 0:1:180
 end
 close(wb);
 figure;
-plot(rrmse);
-[~,theta] = min(rrmse);
+plot(0:180,rrmse);title('RRMSE vs theta');
+xlabel('theta (degrees)');
+ylabel('RRMSE (original,reconstructed image)');[~,theta] = min(rrmse);
 theta = theta-1;
 fprintf('The optimal angle is theta = %d degrees',theta);
 reconstructed_image = iradon(radon(imageAC,theta:1:theta+150),theta:1:theta+150);
-imagesc(reconstructed_image);colormap(gray);title('Reconstructed Chest Image');
+figure;
+imagesc(reconstructed_image);colormap(gray);title('Reconstructed Chest Image for optimal theta');
 
 %% Phantom Image
 load('../data/myPhantom.mat');
+figure;
 imagesc(imageAC);colormap(gray);title('Original Phantom Image');
 rrmse = zeros(181,1);
 wb = waitbar(0,'Please wait...');
@@ -133,11 +142,14 @@ for theta = 0:1:180
 end
 close(wb);
 figure;
-plot(rrmse);
+plot(0:180,rrmse);title('RRMSE vs theta');
+xlabel('theta (degrees)');
+ylabel('RRMSE (original,reconstructed image)');
 [~,theta] = min(rrmse);
 theta = theta-1;
 fprintf('The optimal angle is theta = %d degrees',theta);
 reconstructed_image = iradon(radon(imageAC,theta:1:theta+150),theta:1:theta+150);
-imagesc(reconstructed_image);colormap(gray);title('Reconstructed Phantom Image');
+figure;
+imagesc(reconstructed_image);colormap(gray);title('Reconstructed Phantom Image for optimal theta');
 ##### SOURCE END #####
 --></body></html>
