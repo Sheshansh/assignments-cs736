@@ -1,0 +1,232 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>q1</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-03-07"><meta name="DC.source" content="q1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Question 1</a></li><li><a href="#2">Justification of choices of Interpolation scheme and step</a></li><li><a href="#3">Comparision of Radon transforms</a></li><li><a href="#5">Choice of delta t and delta theta values</a></li><li><a href="#7">Choice of delta s</a></li></ul></div><h2>Question 1<a name="1"></a></h2><pre class="codeinput">image = phantom(128);
+</pre><h2>Justification of choices of Interpolation scheme and step<a name="2"></a></h2><p>
+<b>Interpolation scheme</b> : Bilinear interpolation. (The default in interp2)
+This is because nearest neighbour though fastest would be very bad scheme
+for approximation of line integrals. Bilinear interpolation is fast as
+well as serves a good way to approximate line integrals.
+<br>
+<b>Step size</b> : 1 pixel distance. For <1 pixel step size, the improvement is
+not much whereas for >1, the smoothness of the radon transform image is
+lost.
+</p><h2>Comparision of Radon transforms<a name="3"></a></h2><pre class="codeinput">rt_half = myRadonTrans(image,0.5);
+rt_one = myRadonTrans(image,1.0);
+rt_three = myRadonTrans(image,3.0);
+figure;
+imagesc(rt_half);colormap(jet);title(<span class="string">'RT with delta s = 0.5'</span>);
+figure;
+imagesc(rt_one);colormap(jet);title(<span class="string">'RT with delta s = 1.0'</span>);
+figure;
+imagesc(rt_three);colormap(jet);title(<span class="string">'RT with delta s = 3.0'</span>);
+figure;
+hold <span class="string">on</span>;
+h1 = plot((1:1:37)',rt_half(:,1),<span class="string">'r'</span>,<span class="string">'linewidth'</span>,3);
+h2 = plot((1:1:37)',rt_one(:,1),<span class="string">'g'</span>,<span class="string">'linewidth'</span>,2);
+h3 = plot((1:1:37)',rt_three(:,1),<span class="string">'b'</span>,<span class="string">'linewidth'</span>,2);
+title(<span class="string">'1D function plot for theta = 0 degrees'</span>);
+legend([h1;h2;h3],[<span class="string">'step=0.5'</span>;<span class="string">'step=1.0'</span>;<span class="string">'step=3.0'</span>]);
+figure;hold <span class="string">on</span>;
+h1 = plot((1:1:37)',rt_half(:,19),<span class="string">'r'</span>,<span class="string">'linewidth'</span>,3);
+h2 = plot((1:1:37)',rt_one(:,19),<span class="string">'g'</span>,<span class="string">'linewidth'</span>,2);
+h3 = plot((1:1:37)',rt_three(:,19),<span class="string">'b'</span>,<span class="string">'linewidth'</span>,2);
+title(<span class="string">'1D function plot for theta = 90 degrees'</span>);
+legend([h1;h2;h3],[<span class="string">'step=0.5'</span>;<span class="string">'step=1.0'</span>;<span class="string">'step=3.0'</span>]);
+</pre><img vspace="5" hspace="5" src="q1_01.png" alt=""> <img vspace="5" hspace="5" src="q1_02.png" alt=""> <img vspace="5" hspace="5" src="q1_03.png" alt=""> <img vspace="5" hspace="5" src="q1_04.png" alt=""> <img vspace="5" hspace="5" src="q1_05.png" alt=""> <p>
+The 1D plot and radon transform image with delta s = 3.0 appear to
+be the roughest. This would be because choosing large delta s value would
+lead to a bad approximation to line integral. <br>
+Whereas, the radon transform image and 1d plot look almost the same for
+delta s = 0.5 and 1.0. This is because the improvement in the
+approximation to line integrals won't be there for smaller values of
+delta s because of the bilinear interpolation scheme. For smaller values
+of delta s (smaller than 1), as it would only mean more points to interpolate at between
+two consecutive pixels, because of the linear interpolation scheme, the
+sum would remain the same.
+</p><h2>Choice of delta t and delta theta values<a name="5"></a></h2><pre class="codeinput">highres_radon = myRadonTransHighRes(image,1.0);
+figure;
+imagesc(highres_radon);colormap(jet);title(<span class="string">'RT with delta t = delta theta = delta s = 1.0'</span>);
+</pre><img vspace="5" hspace="5" src="q1_06.png" alt=""> <p>
+The best values to choose for delta t and delta theta would be close to
+1. This is because as we can see from the above plot, if we set delta t and delta
+theta both to be 1, then the radon transform image is much smoother than
+the one with delta t = delta theta = 5.0. But higher resolution image
+takes much more time to compute. From the tic toc values, we can see that
+lower resolution takes around 0.4 seconds of computation time whereas the
+high resolution radon transform takes aroung 8.5 seconds. (The times are
+reported based on the runs on our PC). <br>
+It also means more measurements in
+the real world scenario which would mean more X-Ray exposure for
+patients. <br>
+So, there is a tradeoff here. Higher values of delta theta and
+delta t don't give very smooth radon transforms and hence not very good
+reconstructions but smaller values have practical limitations.
+</p><h2>Choice of delta s<a name="7"></a></h2><p> As we can see from the plots of part c, there is difference in the
+plots for delta s = 0.3 and delta s = 1.0. In face they overlap in the
+above case. But for delta s = 3.0, the plot is not as smooth than the
+lesser values. Also, for delta s = 0.3, the computation time is more.
+Hence, the <b> best value to choose is 1.0. </b> <br>
+If we choose delta s << 1, the computation time would be high because
+each integral computation will take more time, but the improvement in the
+final result won't be much. <br>
+On the other hand, if we choose delta s >> 1, then there would be loss in
+the quality of the reconstructed image and the computed integrals won't
+be very close to the actual line integrals. </p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Question 1
+
+image = phantom(128);
+
+%% Justification of choices of Interpolation scheme and step
+% <html>
+% <b>Interpolation scheme</b> : Bilinear interpolation. (The default in interp2)
+% This is because nearest neighbour though fastest would be very bad scheme
+% for approximation of line integrals. Bilinear interpolation is fast as
+% well as serves a good way to approximate line integrals.
+% <br>
+% <b>Step size</b> : 1 pixel distance. For <1 pixel step size, the improvement is
+% not much whereas for >1, the smoothness of the radon transform image is
+% lost.
+% </html>
+
+%% Comparision of Radon transforms
+rt_half = myRadonTrans(image,0.5);
+rt_one = myRadonTrans(image,1.0);
+rt_three = myRadonTrans(image,3.0);
+figure;
+imagesc(rt_half);colormap(jet);title('RT with delta s = 0.5');
+figure;
+imagesc(rt_one);colormap(jet);title('RT with delta s = 1.0');
+figure;
+imagesc(rt_three);colormap(jet);title('RT with delta s = 3.0');
+figure;
+hold on;
+h1 = plot((1:1:37)',rt_half(:,1),'r','linewidth',3);
+h2 = plot((1:1:37)',rt_one(:,1),'g','linewidth',2);
+h3 = plot((1:1:37)',rt_three(:,1),'b','linewidth',2);
+title('1D function plot for theta = 0 degrees');
+legend([h1;h2;h3],['step=0.5';'step=1.0';'step=3.0']);
+figure;hold on;
+h1 = plot((1:1:37)',rt_half(:,19),'r','linewidth',3);
+h2 = plot((1:1:37)',rt_one(:,19),'g','linewidth',2);
+h3 = plot((1:1:37)',rt_three(:,19),'b','linewidth',2);
+title('1D function plot for theta = 90 degrees');
+legend([h1;h2;h3],['step=0.5';'step=1.0';'step=3.0']);
+%%
+% <html> 
+% The 1D plot and radon transform image with delta s = 3.0 appear to
+% be the roughest. This would be because choosing large delta s value would
+% lead to a bad approximation to line integral. <br>
+% Whereas, the radon transform image and 1d plot look almost the same for
+% delta s = 0.5 and 1.0. This is because the improvement in the
+% approximation to line integrals won't be there for smaller values of
+% delta s because of the bilinear interpolation scheme. For smaller values
+% of delta s (smaller than 1), as it would only mean more points to interpolate at between
+% two consecutive pixels, because of the linear interpolation scheme, the
+% sum would remain the same. 
+% </html>
+
+%% Choice of delta t and delta theta values
+highres_radon = myRadonTransHighRes(image,1.0);
+figure;
+imagesc(highres_radon);colormap(jet);title('RT with delta t = delta theta = delta s = 1.0');
+%%
+% <html> 
+% The best values to choose for delta t and delta theta would be close to
+% 1. This is because as we can see from the above plot, if we set delta t and delta
+% theta both to be 1, then the radon transform image is much smoother than
+% the one with delta t = delta theta = 5.0. But higher resolution image
+% takes much more time to compute. From the tic toc values, we can see that
+% lower resolution takes around 0.4 seconds of computation time whereas the
+% high resolution radon transform takes aroung 8.5 seconds. (The times are 
+% reported based on the runs on our PC). <br>
+% It also means more measurements in
+% the real world scenario which would mean more X-Ray exposure for
+% patients. <br> 
+% So, there is a tradeoff here. Higher values of delta theta and
+% delta t don't give very smooth radon transforms and hence not very good
+% reconstructions but smaller values have practical limitations.
+% </html>
+
+%% Choice of delta s
+%%
+% <html> As we can see from the plots of part c, there is difference in the
+% plots for delta s = 0.3 and delta s = 1.0. In face they overlap in the
+% above case. But for delta s = 3.0, the plot is not as smooth than the
+% lesser values. Also, for delta s = 0.3, the computation time is more.
+% Hence, the <b> best value to choose is 1.0. </b> <br>
+% If we choose delta s << 1, the computation time would be high because
+% each integral computation will take more time, but the improvement in the
+% final result won't be much. <br>
+% On the other hand, if we choose delta s >> 1, then there would be loss in
+% the quality of the reconstructed image and the computed integrals won't
+% be very close to the actual line integrals. </html>
+
+##### SOURCE END #####
+--></body></html>
