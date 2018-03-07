@@ -1,0 +1,291 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>main</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-03-07"><meta name="DC.source" content="main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">2.(a) part</a></li><li><a href="#5">2.(b) part</a></li><li><a href="#8">2.(c) part</a></li></ul></div><pre class="codeinput">clear;
+clc;
+</pre><h2>2.(a) part<a name="2"></a></h2><pre class="codeinput">original_image = phantom(256);
+theta = 0:3:177;
+rad_image = radon(original_image,theta);
+back_projection = 0.5*iradon(rad_image,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>);
+
+[ram_lak_1,shepp_logan_1,cosine_1] = myFilter(rad_image,1);
+[ram_lak_2,shepp_logan_2,cosine_2] = myFilter(rad_image,0.5);
+
+back_ram_lak_1 = 0.5*iradon(ram_lak_1,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>);
+back_shepp_logan_1 = 0.5*iradon(shepp_logan_1,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>);
+back_cosine_1 = 0.5*iradon(cosine_1,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>);
+
+back_ram_lak_2 = 0.5*iradon(ram_lak_2,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>);
+back_shepp_logan_2 = 0.5*iradon(shepp_logan_2,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>);
+back_cosine_2 = 0.5*iradon(cosine_2,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>);
+
+figure;
+imagesc(back_ram_lak_1);colormap(jet);title(<span class="string">'Ram Lak Filter with L = wmax'</span>);
+figure;
+imagesc(back_shepp_logan_1);colormap(jet);title(<span class="string">'Shepp Logan Filter with L = wmax'</span>);
+figure;
+imagesc(back_cosine_1);colormap(jet);title(<span class="string">'Cosine Filter with L = wmax'</span>);
+
+
+figure;
+imagesc(back_ram_lak_2);colormap(jet);title(<span class="string">'Ram Lak Filter with L = wmax/2'</span>);
+figure;
+imagesc(back_shepp_logan_2);colormap(jet);title(<span class="string">'Shepp Logan Filter with L = wmax/2'</span>);
+figure;
+imagesc(back_cosine_2);colormap(jet);title(<span class="string">'Cosine Filter with L = wmax/2'</span>);
+</pre><img vspace="5" hspace="5" src="main_01.png" alt=""> <img vspace="5" hspace="5" src="main_02.png" alt=""> <img vspace="5" hspace="5" src="main_03.png" alt=""> <img vspace="5" hspace="5" src="main_04.png" alt=""> <img vspace="5" hspace="5" src="main_05.png" alt=""> <img vspace="5" hspace="5" src="main_06.png" alt=""> <p><h3>Part A: Justification</h3></p><p>Images which are generated with filters using cutoff frequency as wmax/2 are smoother because the higher frequency components correspond to noise in the image. Also Cosine filter gives smoother output as compared to the other two because the weight of higher frequencies in the cosine filter is less. Among Ram-Lak and Shepp-logan filter, the latter gives smoother image due to similar reason as above.</p><h2>2.(b) part<a name="5"></a></h2><pre class="codeinput">mask = fspecial (<span class="string">'gaussian'</span>, 11, 1);
+s1 = conv2(original_image,mask,<span class="string">'same'</span>);
+
+mask = fspecial (<span class="string">'gaussian'</span>, 51, 5);
+s5 = conv2(original_image,mask,<span class="string">'same'</span>);
+
+
+figure;
+imagesc(original_image);colormap(jet);title(<span class="string">'Unblurred Image'</span>);
+figure;
+imagesc(s1);colormap(jet);title(<span class="string">'Gaussian blurred image with sigma = 1'</span>);
+figure;
+imagesc(s5);colormap(jet);title(<span class="string">'Gaussian blurred image with sigma = 5'</span>);
+
+rad_image_1 = radon(s1,theta);
+rad_image_5 = radon(s5,theta);
+
+[f0,~,~] = myFilter(rad_image,1);
+[f1,~,~] = myFilter(rad_image_1,1);
+[f5,~,~] = myFilter(rad_image_5,1);
+
+r0 = 0.5*iradon(f0,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+r1 = 0.5*iradon(f1,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+r5 = 0.5*iradon(f5,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+
+rrmse_0 = RRMSE(original_image,r0);
+rrmse_1 = RRMSE(s1,r1);
+rrmse_5 = RRMSE(s5,r5);
+fprintf(<span class="string">'rrmse_0 is %0.4f\n'</span>,rrmse_0);
+fprintf(<span class="string">'rrmse_1 is %0.4f\n'</span>,rrmse_1);
+fprintf(<span class="string">'rrmse_5 is %0.4f\n'</span>,rrmse_5);
+</pre><pre class="codeoutput">rrmse_0 is 0.5972
+rrmse_1 is 0.5022
+rrmse_5 is 0.4382
+</pre><img vspace="5" hspace="5" src="main_07.png" alt=""> <img vspace="5" hspace="5" src="main_08.png" alt=""> <img vspace="5" hspace="5" src="main_09.png" alt=""> <p><h3>Part B: Justification</h3></p><pre>RRMSE is largest for unblurred image and smallest for image with
+greatest blurring. This is because blurring reduces the higher frequency
+components. So when we filter the fourier transform of image, less
+number of frequencies are removed which in turn leads to less error
+between the original image and reconstructed image.</pre><h2>2.(c) part<a name="8"></a></h2><pre class="codeinput">N = size(rad_image,1);
+rrmse0_values = zeros(N,1);
+rrmse1_values = zeros(N,1);
+rrmse5_values = zeros(N,1);
+<span class="keyword">for</span> i = 1:N
+    [radon_filtered_0,~,~] = myFilter(rad_image, i/N);
+    back_proj_0 = 0.5*iradon(radon_filtered_0,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+
+    [radon_filtered_1,~,~] = myFilter(rad_image_1, i/N);
+    back_proj_1 = 0.5*iradon(radon_filtered_1,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+
+    [radon_filtered_5,~,~] = myFilter(rad_image_5, i/N);
+    back_proj_5 = 0.5*iradon(radon_filtered_5,theta,<span class="string">'linear'</span>,<span class="string">'none'</span>,1,256);
+
+
+    rrmse0_values(i) = RRMSE(original_image, back_proj_0 );
+    rrmse1_values(i) = RRMSE(s1, back_proj_1 );
+    rrmse5_values(i) = RRMSE(s5, back_proj_5 );
+<span class="keyword">end</span>
+figure;
+plot(rrmse0_values,<span class="string">'r'</span>)
+hold <span class="string">on</span>;
+plot(rrmse1_values,<span class="string">'g'</span>)
+hold <span class="string">on</span>;
+plot(rrmse5_values,<span class="string">'b'</span>)
+legend(<span class="string">'RRMSE of S0'</span>,<span class="string">'RRMSE of S1'</span>,<span class="string">'RRMSE of S5'</span>)
+</pre><img vspace="5" hspace="5" src="main_10.png" alt=""> <p><h3>Part C: Justification</h3></p><pre>RRMSE is very large for L=1, this is because most of the frequency
+components are removed and the resulting image is almost uniform. Then
+it drops to a minima and after that starts rising again as we allow
+higher frequencies. This is because noise is amplified if we don't
+remove the higher frequency components.</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear;
+clc;
+%% 2.(a) part
+original_image = phantom(256);
+theta = 0:3:177;
+rad_image = radon(original_image,theta);
+back_projection = 0.5*iradon(rad_image,theta,'linear','none');
+
+[ram_lak_1,shepp_logan_1,cosine_1] = myFilter(rad_image,1);
+[ram_lak_2,shepp_logan_2,cosine_2] = myFilter(rad_image,0.5);
+
+back_ram_lak_1 = 0.5*iradon(ram_lak_1,theta,'linear','none');
+back_shepp_logan_1 = 0.5*iradon(shepp_logan_1,theta,'linear','none');
+back_cosine_1 = 0.5*iradon(cosine_1,theta,'linear','none');
+
+back_ram_lak_2 = 0.5*iradon(ram_lak_2,theta,'linear','none');
+back_shepp_logan_2 = 0.5*iradon(shepp_logan_2,theta,'linear','none');
+back_cosine_2 = 0.5*iradon(cosine_2,theta,'linear','none');
+
+figure;
+imagesc(back_ram_lak_1);colormap(jet);title('Ram Lak Filter with L = wmax');
+figure;
+imagesc(back_shepp_logan_1);colormap(jet);title('Shepp Logan Filter with L = wmax');
+figure;
+imagesc(back_cosine_1);colormap(jet);title('Cosine Filter with L = wmax');
+
+
+figure;
+imagesc(back_ram_lak_2);colormap(jet);title('Ram Lak Filter with L = wmax/2');
+figure;
+imagesc(back_shepp_logan_2);colormap(jet);title('Shepp Logan Filter with L = wmax/2');
+figure;
+imagesc(back_cosine_2);colormap(jet);title('Cosine Filter with L = wmax/2');
+
+%%
+% <html><h3>Part A: Justification</h3></html>
+%%
+% Images which are generated with filters using cutoff frequency as wmax/2
+% are smoother because the higher frequency components correspond to noise
+% in the image. Also Cosine filter gives smoother output as compared to the
+% other two because the weight of higher frequencies in the cosine filter
+% is less. Among Ram-Lak and Shepp-logan filter, the latter gives smoother
+% image due to similar reason as above. 
+%%   2.(b) part
+mask = fspecial ('gaussian', 11, 1);
+s1 = conv2(original_image,mask,'same');
+
+mask = fspecial ('gaussian', 51, 5);
+s5 = conv2(original_image,mask,'same');
+
+
+figure;
+imagesc(original_image);colormap(jet);title('Unblurred Image');
+figure;
+imagesc(s1);colormap(jet);title('Gaussian blurred image with sigma = 1');
+figure;
+imagesc(s5);colormap(jet);title('Gaussian blurred image with sigma = 5');
+
+rad_image_1 = radon(s1,theta);
+rad_image_5 = radon(s5,theta);
+
+[f0,~,~] = myFilter(rad_image,1);
+[f1,~,~] = myFilter(rad_image_1,1);
+[f5,~,~] = myFilter(rad_image_5,1);
+
+r0 = 0.5*iradon(f0,theta,'linear','none',1,256);
+r1 = 0.5*iradon(f1,theta,'linear','none',1,256);
+r5 = 0.5*iradon(f5,theta,'linear','none',1,256);
+
+rrmse_0 = RRMSE(original_image,r0);
+rrmse_1 = RRMSE(s1,r1);
+rrmse_5 = RRMSE(s5,r5);
+fprintf('rrmse_0 is %0.4f\n',rrmse_0);
+fprintf('rrmse_1 is %0.4f\n',rrmse_1);
+fprintf('rrmse_5 is %0.4f\n',rrmse_5);
+
+%%
+% <html><h3>Part B: Justification</h3></html>
+%%
+%  RRMSE is largest for unblurred image and smallest for image with
+%  greatest blurring. This is because blurring reduces the higher frequency
+%  components. So when we filter the fourier transform of image, less
+%  number of frequencies are removed which in turn leads to less error
+%  between the original image and reconstructed image.
+%% 2.(c) part
+N = size(rad_image,1);
+rrmse0_values = zeros(N,1); 
+rrmse1_values = zeros(N,1);
+rrmse5_values = zeros(N,1);
+for i = 1:N
+    [radon_filtered_0,~,~] = myFilter(rad_image, i/N);
+    back_proj_0 = 0.5*iradon(radon_filtered_0,theta,'linear','none',1,256);
+    
+    [radon_filtered_1,~,~] = myFilter(rad_image_1, i/N);
+    back_proj_1 = 0.5*iradon(radon_filtered_1,theta,'linear','none',1,256);
+    
+    [radon_filtered_5,~,~] = myFilter(rad_image_5, i/N);
+    back_proj_5 = 0.5*iradon(radon_filtered_5,theta,'linear','none',1,256);
+
+    
+    rrmse0_values(i) = RRMSE(original_image, back_proj_0 );
+    rrmse1_values(i) = RRMSE(s1, back_proj_1 );
+    rrmse5_values(i) = RRMSE(s5, back_proj_5 );
+end
+figure;
+plot(rrmse0_values,'r')
+hold on;
+plot(rrmse1_values,'g')
+hold on;
+plot(rrmse5_values,'b')
+legend('RRMSE of S0','RRMSE of S1','RRMSE of S5')
+%%
+% <html><h3>Part C: Justification</h3></html>
+%%
+%  RRMSE is very large for L=1, this is because most of the frequency
+%  components are removed and the resulting image is almost uniform. Then
+%  it drops to a minima and after that starts rising again as we allow
+%  higher frequencies. This is because noise is amplified if we don't
+%  remove the higher frequency components.
+##### SOURCE END #####
+--></body></html>
