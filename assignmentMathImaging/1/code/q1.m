@@ -18,6 +18,9 @@ image = phantom(128);
 rt_half = myRadonTrans(image,0.5);
 rt_one = myRadonTrans(image,1.0);
 rt_three = myRadonTrans(image,3.0);
+save('../results/rt_half.mat','rt_half');
+save('../results/rt_one.mat','rt_one');
+save('../results/rt_three.mat','rt_three');
 figure;
 imagesc(rt_half);colormap(jet);title('RT with delta s = 0.5');
 figure;
@@ -55,6 +58,7 @@ legend([h1;h2;h3],['step=0.5';'step=1.0';'step=3.0']);
 highres_radon = myRadonTransHighRes(image,1.0);
 figure;
 imagesc(highres_radon);colormap(jet);title('RT with delta t = delta theta = delta s = 1.0');
+save('../results/rt_high_res.mat','highres_radon');
 %%
 % <html> 
 % The best values to choose for delta t and delta theta would be close to

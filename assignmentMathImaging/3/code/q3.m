@@ -18,6 +18,8 @@ fprintf('The optimal angle is theta = %d degrees',theta);
 reconstructed_image = iradon(radon(imageAC,theta:1:theta+150),theta:1:theta+150);
 figure;
 imagesc(reconstructed_image);colormap(gray);title('Reconstructed Chest Image for optimal theta');
+save('../results/rrmse_values_chest.mat','rrmse');
+save('../results/reconstructed_chest_image.mat','reconstructed_image');
 
 %% Phantom Image
 load('../data/myPhantom.mat');
@@ -41,3 +43,5 @@ fprintf('The optimal angle is theta = %d degrees',theta);
 reconstructed_image = iradon(radon(imageAC,theta:1:theta+150),theta:1:theta+150);
 figure;
 imagesc(reconstructed_image);colormap(gray);title('Reconstructed Phantom Image for optimal theta');
+save('../results/rrmse_values_phantom.mat','rrmse');
+save('../results/reconstructed_phantom_image.mat','reconstructed_image');
