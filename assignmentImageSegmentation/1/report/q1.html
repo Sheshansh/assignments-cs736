@@ -1,0 +1,294 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>q1</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-04-08"><meta name="DC.source" content="q1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Initializing parameters</a></li><li><a href="#3">Initialising the memberships uij</a></li><li><a href="#4">Optimization</a></li></ul></div><pre class="codeinput">clear;
+close <span class="string">all</span>;
+load(<span class="string">'../data/assignmentSegmentBrain.mat'</span>)
+</pre><h2>Initializing parameters<a name="2"></a></h2><pre class="codeinput">K = 3;
+q = 2.0;
+fprintf(<span class="string">'We used q = %d\n'</span>,q);
+fprintf(<span class="string">'We used 3*3 gaussian as neighborhood mask\n'</span>);
+mask = fspecial(<span class="string">'gaussian'</span>); <span class="comment">% 3*3 mask</span>
+bias_initial_value = 0.5;
+[m,n]=size(imageData);
+image = imageData.*imageMask;
+imageDataLinear = reshape(image,m*n,1);
+imageMaskLinear = reshape(imageMask,m*n,1);
+u_init = zeros(m,n,K);
+</pre><pre class="codeoutput">We used q = 2
+We used 3*3 gaussian as neighborhood mask
+</pre><h2>Initialising the memberships uij<a name="3"></a></h2><p> The initialization of membership values was done by bracketing the
+range of intensity values of pixels inside the mask. <br>
+The motivation was that the initialization should be binary and approximately uniformly
+spread across the range of intensity values. The value of class means is
+just the value of means over the initial segmented image given by the
+above range division algorithm. </p><pre class="codeinput">maxi = max(max(image));
+mini = min(min(image));
+range = maxi-mini;
+class_means = zeros(1,K);
+<span class="keyword">for</span> i=1:K
+   u_init(:,:,i) = (image &gt;= mini + range* (i-1)/K).*(image &lt; mini + range * i/K);
+   u_init(:,:,i) = u_init(:,:,i).*imageMask;
+   class_means(i) = mini + range*(2*i-1)/(2*K);
+<span class="keyword">end</span>
+<span class="comment">% Cropping initial memberships and image</span>
+col_sum = sum(imageMask,1);row_sum = sum(imageMask,2);
+row_min = find(row_sum&gt;0,1,<span class="string">'first'</span>);row_max = find(row_sum&gt;0,1,<span class="string">'last'</span>);
+col_min = find(col_sum&gt;0,1,<span class="string">'first'</span>);col_max = find(col_sum&gt;0,1,<span class="string">'last'</span>);
+crop_rect = [col_min, row_min, col_max-col_min, row_max-row_min];
+image = imcrop(image,crop_rect);
+cropped_mask = imcrop(imageMask,crop_rect);
+[m,n]=size(image);
+u = zeros(m,n,K);
+<span class="keyword">for</span> k = 1:K
+    u(:,:,k) = imcrop(u_init(:,:,k),crop_rect);
+<span class="keyword">end</span>
+subplot(131), imshow(u(:,:,1)); title(<span class="string">'class 1'</span>);
+subplot(132), imshow(u(:,:,2)); title(<span class="string">'class 2'</span>);
+subplot(133), imshow(u(:,:,3)); title(<span class="string">'class 3'</span>);
+suptitle(<span class="string">'Initial membership estimates'</span>);
+figure;
+<span class="comment">% Initializing the bias</span>
+bias = zeros(m,n)+bias_initial_value;
+objective_values = [];
+d = zeros(m,n,K);
+stoprint = sprintf(<span class="string">'%d, '</span>,class_means);
+fprintf(<span class="string">'Initial class means %s\n'</span>,stoprint);
+</pre><pre class="codeoutput">Initial class means 1.539596e-01, 4.618789e-01, 7.697981e-01, 
+</pre><img vspace="5" hspace="5" src="q1_01.png" alt=""> <img vspace="5" hspace="5" src="q1_02.png" alt=""> <h2>Optimization<a name="4"></a></h2><pre class="codeinput"><span class="keyword">for</span> it = 1:20
+    <span class="comment">% Calculating needed parameters</span>
+    bias_conv = conv2(bias,mask,<span class="string">'same'</span>);
+    bias_sq_conv = conv2(bias.^2,mask,<span class="string">'same'</span>);
+    <span class="comment">% Finding Optimal membership</span>
+    <span class="keyword">for</span> k = 1:K
+        d(:,:,k) = image.^2-2*class_means(k)*(image.*bias_conv)+class_means(k)^2*bias_sq_conv;
+        d(:,:,k)=d(:,:,k)+(d(:,:,k)==0)*mean(mean(d(:,:,k)));
+    <span class="keyword">end</span>
+    dinv_raised = real((d).^(1/(1-q)));dinv_denom = sum(dinv_raised,3);
+    <span class="keyword">for</span> k = 1:K
+        u(:,:,k) = dinv_raised(:,:,k)./dinv_denom;
+    <span class="keyword">end</span>
+    <span class="comment">% Finding optimal class means</span>
+    <span class="keyword">for</span> k = 1:K
+        class_means(k) = sum(sum((u(:,:,k).^q).*image.*bias_conv))/sum(sum((u(:,:,k).^q).*bias_sq_conv));
+    <span class="keyword">end</span>
+    <span class="comment">% Finding optimal bias</span>
+    sum_uc = zeros(m,n);sum_ucsq = zeros(m,n);
+    <span class="keyword">for</span> k=1:K
+        sum_uc = sum_uc + (u(:,:,k).^q)*class_means(k);
+        sum_ucsq = sum_ucsq + (u(:,:,k).^q)*(class_means(k).^2);
+    <span class="keyword">end</span>
+    bias = conv2(image.*sum_uc,mask,<span class="string">'same'</span>)./conv2(sum_ucsq,mask,<span class="string">'same'</span>);
+    <span class="comment">% Finding objective function value</span>
+    objective = zeros(m,n);
+    <span class="keyword">for</span> k = 1:K
+        objective = objective + (u(:,:,k).^q).*d(:,:,k);
+    <span class="keyword">end</span>
+    objective = sum(sum(objective));
+    objective_values = [objective_values log(objective)];
+<span class="keyword">end</span>
+stoprint = sprintf(<span class="string">'%d, '</span>,class_means);
+bias_removed_image = zeros(m,n);
+<span class="keyword">for</span> k = 1:K
+    bias_removed_image = bias_removed_image + class_means(k)*u(:,:,k);
+<span class="keyword">end</span>
+residual_image = image-bias_removed_image.*bias;
+fprintf(<span class="string">'Optimal class means %s\n'</span>,stoprint);
+plot(objective_values);
+xlabel(<span class="string">'iteration'</span>);
+ylabel(<span class="string">'log objective function'</span>)
+title(<span class="string">'log objective vs iterations'</span>);
+figure;
+imshow(image);
+title(<span class="string">'corrupted image provided'</span>);colormap(gray);
+figure;
+subplot(131), imshow(bias); title(<span class="string">'Optimal bias'</span>);
+subplot(132), imshow(bias_removed_image); title(<span class="string">'Bias removed image'</span>);
+subplot(133), imshow(residual_image); title(<span class="string">'Residual image'</span>);
+suptitle(<span class="string">'After optimization'</span>);
+figure;
+subplot(131), imshow(u(:,:,1)); title(<span class="string">'class 1'</span>);
+subplot(132), imshow(u(:,:,2)); title(<span class="string">'class 2'</span>);
+subplot(133), imshow(u(:,:,3)); title(<span class="string">'class 3'</span>);
+suptitle(<span class="string">'Optimal membership estimates'</span>);
+</pre><pre class="codeoutput">Optimal class means 8.417848e-02, 6.666229e-01, 9.376909e-01, 
+</pre><img vspace="5" hspace="5" src="q1_03.png" alt=""> <img vspace="5" hspace="5" src="q1_04.png" alt=""> <img vspace="5" hspace="5" src="q1_05.png" alt=""> <img vspace="5" hspace="5" src="q1_06.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear;
+close all;
+load('../data/assignmentSegmentBrain.mat')
+%% Initializing parameters
+K = 3;
+q = 2.0;
+fprintf('We used q = %d\n',q);
+fprintf('We used 3*3 gaussian as neighborhood mask\n');
+mask = fspecial('gaussian'); % 3*3 mask
+bias_initial_value = 0.5;
+[m,n]=size(imageData);
+image = imageData.*imageMask;
+imageDataLinear = reshape(image,m*n,1);
+imageMaskLinear = reshape(imageMask,m*n,1);
+u_init = zeros(m,n,K);
+%% Initialising the memberships uij 
+% <html> The initialization of membership values was done by bracketing the
+% range of intensity values of pixels inside the mask. <br>
+% The motivation was that the initialization should be binary and approximately uniformly
+% spread across the range of intensity values. The value of class means is
+% just the value of means over the initial segmented image given by the
+% above range division algorithm. </html>
+maxi = max(max(image));
+mini = min(min(image));
+range = maxi-mini;
+class_means = zeros(1,K);
+for i=1:K  
+   u_init(:,:,i) = (image >= mini + range* (i-1)/K).*(image < mini + range * i/K);
+   u_init(:,:,i) = u_init(:,:,i).*imageMask;
+   class_means(i) = mini + range*(2*i-1)/(2*K);
+end
+% Cropping initial memberships and image
+col_sum = sum(imageMask,1);row_sum = sum(imageMask,2);
+row_min = find(row_sum>0,1,'first');row_max = find(row_sum>0,1,'last');
+col_min = find(col_sum>0,1,'first');col_max = find(col_sum>0,1,'last');
+crop_rect = [col_min, row_min, col_max-col_min, row_max-row_min];
+image = imcrop(image,crop_rect);
+cropped_mask = imcrop(imageMask,crop_rect);
+[m,n]=size(image);
+u = zeros(m,n,K);
+for k = 1:K
+    u(:,:,k) = imcrop(u_init(:,:,k),crop_rect);
+end
+subplot(131), imshow(u(:,:,1)); title('class 1');
+subplot(132), imshow(u(:,:,2)); title('class 2');
+subplot(133), imshow(u(:,:,3)); title('class 3');
+suptitle('Initial membership estimates');
+figure;
+% Initializing the bias
+bias = zeros(m,n)+bias_initial_value;
+objective_values = [];
+d = zeros(m,n,K);
+stoprint = sprintf('%d, ',class_means);
+fprintf('Initial class means %s\n',stoprint);
+%% Optimization
+for it = 1:20
+    % Calculating needed parameters
+    bias_conv = conv2(bias,mask,'same');
+    bias_sq_conv = conv2(bias.^2,mask,'same');
+    % Finding Optimal membership
+    for k = 1:K
+        d(:,:,k) = image.^2-2*class_means(k)*(image.*bias_conv)+class_means(k)^2*bias_sq_conv;
+        d(:,:,k)=d(:,:,k)+(d(:,:,k)==0)*mean(mean(d(:,:,k)));
+    end
+    dinv_raised = real((d).^(1/(1-q)));dinv_denom = sum(dinv_raised,3);
+    for k = 1:K
+        u(:,:,k) = dinv_raised(:,:,k)./dinv_denom;
+    end
+    % Finding optimal class means
+    for k = 1:K
+        class_means(k) = sum(sum((u(:,:,k).^q).*image.*bias_conv))/sum(sum((u(:,:,k).^q).*bias_sq_conv));
+    end
+    % Finding optimal bias
+    sum_uc = zeros(m,n);sum_ucsq = zeros(m,n);
+    for k=1:K
+        sum_uc = sum_uc + (u(:,:,k).^q)*class_means(k);
+        sum_ucsq = sum_ucsq + (u(:,:,k).^q)*(class_means(k).^2);
+    end
+    bias = conv2(image.*sum_uc,mask,'same')./conv2(sum_ucsq,mask,'same');
+    % Finding objective function value
+    objective = zeros(m,n);
+    for k = 1:K
+        objective = objective + (u(:,:,k).^q).*d(:,:,k);
+    end
+    objective = sum(sum(objective));
+    objective_values = [objective_values log(objective)];
+end
+stoprint = sprintf('%d, ',class_means);
+bias_removed_image = zeros(m,n);
+for k = 1:K
+    bias_removed_image = bias_removed_image + class_means(k)*u(:,:,k);
+end
+residual_image = image-bias_removed_image.*bias;
+fprintf('Optimal class means %s\n',stoprint);
+plot(objective_values);
+xlabel('iteration');
+ylabel('log objective function')
+title('log objective vs iterations');
+figure;
+imshow(image);
+title('corrupted image provided');colormap(gray);
+figure;
+subplot(131), imshow(bias); title('Optimal bias');
+subplot(132), imshow(bias_removed_image); title('Bias removed image');
+subplot(133), imshow(residual_image); title('Residual image');
+suptitle('After optimization');
+figure;
+subplot(131), imshow(u(:,:,1)); title('class 1');
+subplot(132), imshow(u(:,:,2)); title('class 2');
+subplot(133), imshow(u(:,:,3)); title('class 3');
+suptitle('Optimal membership estimates');
+##### SOURCE END #####
+--></body></html>
