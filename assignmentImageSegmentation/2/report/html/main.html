@@ -1,0 +1,186 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>main</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-04-08"><meta name="DC.source" content="main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Initializing Parameters</a></li><li><a href="#2">Labels for beta = 0.4</a></li><li><a href="#3">Labels for beta = 0</a></li></ul></div><h2>Initializing Parameters<a name="1"></a></h2><pre class="codeinput">clear
+clc
+load(<span class="string">'../data/assignmentSegmentBrainGmmEmMrf.mat'</span>);
+numClasses = 3;
+<span class="comment">% Initialize labels uniformly</span>
+[X,means,vars] = initLabels(imageData,imageMask,numClasses);
+</pre><h2>Labels for beta = 0.4<a name="2"></a></h2><pre class="codeinput">beta = 0.4;
+[X,memberships,means,vars] = EMOptimize(X,imageData,imageMask,means,vars,beta,numClasses);
+save(<span class="string">'../results/optimbetaResult.mat'</span>,<span class="string">'X'</span>);
+m1 = memberships(:,:,1);save(<span class="string">'../results/optimbetaMemberships1.mat'</span>,<span class="string">'m1'</span>);
+m2 = memberships(:,:,2);save(<span class="string">'../results/optimbetaMemberships2.mat'</span>,<span class="string">'m2'</span>);
+m3 = memberships(:,:,3);save(<span class="string">'../results/optimbetaMemberships3.mat'</span>,<span class="string">'m3'</span>);
+figure;imagesc(imageData);colormap <span class="string">'gray'</span>;title(<span class="string">'Original image'</span>);colorbar;
+figure;imagesc(X);colormap <span class="string">'gray'</span>;title(<span class="string">'Segmented Image with beta = 0.4'</span>);colorbar;
+figure;imagesc(memberships(:,:,1));colormap <span class="string">'gray'</span>;title(<span class="string">'Memberships for Label 1, beta = 0.4'</span>);colorbar;
+figure;imagesc(memberships(:,:,2));colormap <span class="string">'gray'</span>;title(<span class="string">'Memberships for Label 2, beta = 0.4'</span>);colorbar;
+figure;imagesc(memberships(:,:,3));colormap <span class="string">'gray'</span>;title(<span class="string">'Memberships for Label 3, beta = 0.4'</span>);colorbar;
+fprintf(<span class="string">'The optimal estimates for class means are %.4f, %.4f. %.4f\n'</span>, means(1),means(2),means(3));
+</pre><pre class="codeoutput">Iter 1: Old Prob : 9.5107, New Prob :9.5721
+Iter 2: Old Prob : 9.6070, New Prob :9.6288
+Iter 3: Old Prob : 9.6291, New Prob :9.6557
+Iter 4: Old Prob : 9.6462, New Prob :9.6675
+Iter 5: Old Prob : 9.6566, New Prob :9.6740
+Iter 6: Old Prob : 9.6616, New Prob :9.6721
+Iter 7: Old Prob : 9.6591, New Prob :9.6652
+Iter 8: Old Prob : 9.6514, New Prob :9.6574
+Iter 9: Old Prob : 9.6426, New Prob :9.6472
+Iter 10: Old Prob : 9.6327, New Prob :9.6363
+Iter 11: Old Prob : 9.6247, New Prob :9.6273
+Iter 12: Old Prob : 9.6192, New Prob :9.6209
+Iter 13: Old Prob : 9.6154, New Prob :9.6166
+Iter 14: Old Prob : 9.6130, New Prob :9.6129
+Iter 15: Old Prob : 9.6107, New Prob :9.6112
+Iter 16: Old Prob : 9.6097, New Prob :9.6102
+Iter 17: Old Prob : 9.6091, New Prob :9.6094
+Iter 18: Old Prob : 9.6088, New Prob :9.6091
+Iter 19: Old Prob : 9.6088, New Prob :9.6092
+Iter 20: Old Prob : 9.6088, New Prob :9.6090
+Iter 21: Old Prob : 9.6088, New Prob :9.6089
+The optimal estimates for class means are 0.4151, 0.5396. 0.6337
+</pre><img vspace="5" hspace="5" src="main_01.png" alt=""> <img vspace="5" hspace="5" src="main_02.png" alt=""> <img vspace="5" hspace="5" src="main_03.png" alt=""> <img vspace="5" hspace="5" src="main_04.png" alt=""> <img vspace="5" hspace="5" src="main_05.png" alt=""> <h2>Labels for beta = 0<a name="3"></a></h2><pre class="codeinput">beta = 0;
+[X,memberships,means,vars] = EMOptimize(X,imageData,imageMask,means,vars,beta,numClasses);
+save(<span class="string">'../results/betaZeroResult.mat'</span>,<span class="string">'X'</span>);
+m1 = memberships(:,:,1);save(<span class="string">'../results/betaZeroMemberships1.mat'</span>,<span class="string">'m1'</span>);
+m2 = memberships(:,:,2);save(<span class="string">'../results/betaZeroMemberships2.mat'</span>,<span class="string">'m2'</span>);
+m3 = memberships(:,:,3);save(<span class="string">'../results/betaZeroMemberships3.mat'</span>,<span class="string">'m3'</span>);
+figure;imagesc(X);colormap <span class="string">'gray'</span>;title(<span class="string">'Segmented Image with beta = 0'</span>);colorbar;
+figure;imagesc(memberships(:,:,1));colormap <span class="string">'gray'</span>;title(<span class="string">'Memberships for Label 1, beta = 0'</span>);colorbar;
+figure;imagesc(memberships(:,:,2));colormap <span class="string">'gray'</span>;title(<span class="string">'Memberships for Label 2, beta = 0'</span>);colorbar;
+figure;imagesc(memberships(:,:,3));colormap <span class="string">'gray'</span>;title(<span class="string">'Memberships for Label 3, beta = 0'</span>);colorbar;
+fprintf(<span class="string">'The optimal estimates for class means are %.4f, %.4f. %.4f\n'</span>, means(1),means(2),means(3));
+</pre><pre class="codeoutput">Iter 1: Old Prob : 9.6718, New Prob :9.7239
+Iter 2: Old Prob : 9.7092, New Prob :9.7256
+Iter 3: Old Prob : 9.7208, New Prob :9.7242
+Iter 4: Old Prob : 9.7204, New Prob :9.7213
+Iter 5: Old Prob : 9.7184, New Prob :9.7189
+Iter 6: Old Prob : 9.7167, New Prob :9.7170
+Iter 7: Old Prob : 9.7153, New Prob :9.7155
+Iter 8: Old Prob : 9.7143, New Prob :9.7145
+Iter 9: Old Prob : 9.7136, New Prob :9.7137
+Iter 10: Old Prob : 9.7131, New Prob :9.7132
+Iter 11: Old Prob : 9.7128, New Prob :9.7129
+Iter 12: Old Prob : 9.7126, New Prob :9.7127
+Iter 13: Old Prob : 9.7125, New Prob :9.7126
+Iter 14: Old Prob : 9.7125, New Prob :9.7126
+Iter 15: Old Prob : 9.7126, New Prob :9.7127
+Iter 16: Old Prob : 9.7128, New Prob :9.7129
+Iter 17: Old Prob : 9.7131, New Prob :9.7132
+Iter 18: Old Prob : 9.7134, New Prob :9.7135
+Iter 19: Old Prob : 9.7137, New Prob :9.7138
+Iter 20: Old Prob : 9.7141, New Prob :9.7142
+Iter 21: Old Prob : 9.7146, New Prob :9.7146
+The optimal estimates for class means are 0.4771, 0.5614. 0.6457
+</pre><img vspace="5" hspace="5" src="main_06.png" alt=""> <img vspace="5" hspace="5" src="main_07.png" alt=""> <img vspace="5" hspace="5" src="main_08.png" alt=""> <img vspace="5" hspace="5" src="main_09.png" alt=""> <p>Answers: </p><p>(a)The optimal value of beta is 0.4 (b) To initialize the label image: We divided the intensity range into k classes. The pixels which belong to each class have been assigned that class. This is a reasonable initialization because it is expected that different segments in the brain will fall in different intensity ranges. (c) We initialized the means and variances for each class to be the sample mean and sample variance for each class given the initialized the label image. The motivation for this is that this corresponds to the MAP estimate of the means and variance.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Initializing Parameters
+clear
+clc
+load('../data/assignmentSegmentBrainGmmEmMrf.mat');
+numClasses = 3;
+% Initialize labels uniformly
+[X,means,vars] = initLabels(imageData,imageMask,numClasses);
+
+%% Labels for beta = 0.4
+beta = 0.4;
+[X,memberships,means,vars] = EMOptimize(X,imageData,imageMask,means,vars,beta,numClasses);
+save('../results/optimbetaResult.mat','X');
+m1 = memberships(:,:,1);save('../results/optimbetaMemberships1.mat','m1');
+m2 = memberships(:,:,2);save('../results/optimbetaMemberships2.mat','m2');
+m3 = memberships(:,:,3);save('../results/optimbetaMemberships3.mat','m3');
+figure;imagesc(imageData);colormap 'gray';title('Original image');colorbar;
+figure;imagesc(X);colormap 'gray';title('Segmented Image with beta = 0.4');colorbar;
+figure;imagesc(memberships(:,:,1));colormap 'gray';title('Memberships for Label 1, beta = 0.4');colorbar;
+figure;imagesc(memberships(:,:,2));colormap 'gray';title('Memberships for Label 2, beta = 0.4');colorbar;
+figure;imagesc(memberships(:,:,3));colormap 'gray';title('Memberships for Label 3, beta = 0.4');colorbar;
+fprintf('The optimal estimates for class means are %.4f, %.4f. %.4f\n', means(1),means(2),means(3));
+%% Labels for beta = 0
+beta = 0;
+[X,memberships,means,vars] = EMOptimize(X,imageData,imageMask,means,vars,beta,numClasses);
+save('../results/betaZeroResult.mat','X');
+m1 = memberships(:,:,1);save('../results/betaZeroMemberships1.mat','m1');
+m2 = memberships(:,:,2);save('../results/betaZeroMemberships2.mat','m2');
+m3 = memberships(:,:,3);save('../results/betaZeroMemberships3.mat','m3');
+figure;imagesc(X);colormap 'gray';title('Segmented Image with beta = 0');colorbar;
+figure;imagesc(memberships(:,:,1));colormap 'gray';title('Memberships for Label 1, beta = 0');colorbar;
+figure;imagesc(memberships(:,:,2));colormap 'gray';title('Memberships for Label 2, beta = 0');colorbar;
+figure;imagesc(memberships(:,:,3));colormap 'gray';title('Memberships for Label 3, beta = 0');colorbar;
+fprintf('The optimal estimates for class means are %.4f, %.4f. %.4f\n', means(1),means(2),means(3));
+%%
+% <html>Answers: </html>
+%%
+% (a)The optimal value of beta is 0.4
+% (b) To initialize the label image: We divided the intensity range into k classes. The pixels which belong to each class have been assigned that class. This is a reasonable initialization because it is expected that different segments in the brain will fall in different intensity ranges.
+% (c) We initialized the means and variances for each class to be the sample mean and sample variance for each
+% class given the initialized the label image. The motivation for this is
+% that this corresponds to the MAP estimate of the means and variance.
+##### SOURCE END #####
+--></body></html>
