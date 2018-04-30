@@ -1,3 +1,3 @@
 # assignments-cs736
 
-These are solutions to the assignments for the course CS736, Spring 2018.
+Assignments for the course CS736, Spring 2018 (Prof. Suyash Awate)
